@@ -55,14 +55,7 @@ JWT_EXPIRES_IN=7d
 FRONTEND_URL=http://localhost:5173
 BCRYPT_ROUNDS=10
 
-# Optional seed users
-SEED_ADMIN_EMAIL=admin@example.com
-SEED_ADMIN_PASSWORD=Admin@123
-SEED_ORG_EMAIL=org@example.com
-SEED_ORG_PASSWORD=Org@123
-SEED_HOSP_EMAIL=hospital@example.com
-SEED_HOSP_PASSWORD=Hosp@123
-```
+
 
 3. Install frontend dependencies:
 ```
