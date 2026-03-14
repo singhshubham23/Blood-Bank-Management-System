@@ -1,81 +1,3 @@
-// import React, { useEffect, useState, useContext } from "react";
-// import api from "../api/axios";
-// import { AuthContext } from "../context/AuthContext";
-// import { io } from "socket.io-client";
-
-// export default function Inventory() {
-//   const [inventory, setInventory] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const { user } = useContext(AuthContext);
-
-//   useEffect(() => {
-//     // Fetch global inventory
-//     api
-//       .get("/inventory")
-//       .then((res) => setInventory(res.data.inventory))
-//       .catch(() => alert("Failed to load inventory"))
-//       .finally(() => setLoading(false));
-
-//     const socket = io(import.meta.env.VITE_SOCKET_URL, {
-//       transports: ["websocket", "polling"],
-//       reconnection: true,
-//     });
-
-//     socket.emit("subscribeInventory"); // join global room
-
-//     socket.on("inventory:update", (updatedInv) => {
-//       console.log("🔴 LIVE UPDATE:", updatedInv);
-//       setInventory(updatedInv);
-//     });
-
-//     return () => socket.disconnect();
-//   }, []);
-
-//   if (!user)
-//     return <h4 className="text-center mt-5">Please Login ❗</h4>;
-
-//   if (!["admin", "organisation", "hospital"].includes(user.role))
-//     return <h4 className="text-center text-danger mt-5">Unauthorized Access ❌</h4>;
-
-//   if (loading || !inventory)
-//     return <h4 className="text-center mt-5">Loading...</h4>;
-
-//   const groups = inventory.groups || {};
-
-//   return (
-//     <div className="container py-5">
-//       <h2 className="mb-4 text-center text-danger fw-bold">
-//         Live Inventory — {inventory.bloodBankName || "Global Inventory"}
-//       </h2>
-
-//       <div className="row g-4">
-//         {Object.entries(groups).map(([group, units]) => (
-//           <div key={group} className="col-6 col-sm-4 col-md-3 col-lg-2">
-//             <div className="card text-center shadow-lg border-0 p-4 animated-card">
-//               <h5 className="text-danger fw-bold">{group}</h5>
-//               <p className="display-5 fw-bold">{units}</p>
-//               <small className="text-muted">Units</small>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-
-//       {Object.keys(groups).length === 0 && (
-//         <p className="text-center mt-5 text-secondary">
-//           No blood units available yet.
-//         </p>
-//       )}
-
-//       <style>{`
-//         .animated-card:hover {
-//           transform: translateY(-6px);
-//           box-shadow: 0px 10px 25px rgba(220, 0, 0, 0.3);
-//         }
-//       `}</style>
-//     </div>
-//   );
-// }
-
 import React, { useEffect, useState, useContext } from "react";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
@@ -85,30 +7,48 @@ export default function Inventory() {
   const [inventory, setInventory] = useState(null);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
-  const [search, setSearch] = useState(""); 
+  const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
-    api
-      .get("/inventory")
-      .then((res) => setInventory(res.data.inventory))
-      .catch(() => alert("Failed to load inventory"))
-      .finally(() => setLoading(false));
+    if (!user) return;
+
+    const loadInventory = async () => {
+      try {
+        if (["organisation", "hospital"].includes(user.role)) {
+          const res = await api.get("/organisation/inventory");
+          setInventory(res.data.inventory);
+        } else {
+          const res = await api.get("/inventory");
+          setInventory(res.data.inventory);
+        }
+      } catch (err) {
+        alert("Failed to load inventory");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInventory();
 
     const socket = io(import.meta.env.VITE_SOCKET_URL);
-    socket.emit("subscribeInventory");
+    if (["organisation", "hospital"].includes(user.role)) {
+      socket.emit("subscribeInventory", { orgId: user._id });
+    } else {
+      socket.emit("subscribeInventory");
+    }
 
     socket.on("inventory:update", (updatedInv) => {
-      setInventory(updatedInv);
+      setInventory(updatedInv.inventory || updatedInv);
     });
 
     return () => socket.disconnect();
-  }, []);
+  }, [user]);
 
-  if (!user) return <h4 className="text-center mt-5">Please Login ❗</h4>;
+  if (!user) return <h4 className="text-center mt-5">Please Login</h4>;
 
-  if (!["admin", "organisation", "hospital"].includes(user.role))
-    return <h4 className="text-center mt-5 text-danger">Unauthorized ❌</h4>;
+  if (!["organisation", "hospital"].includes(user.role))
+    return <h4 className="text-center mt-5 text-danger">Unauthorized</h4>;
 
   if (loading || !inventory) return <h4 className="text-center mt-5">Loading...</h4>;
 
@@ -116,18 +56,16 @@ export default function Inventory() {
   const totalUnits = Object.values(groups).reduce((sum, v) => sum + v, 0);
 
   const filtered = Object.entries(groups)
-    .filter(([group]) =>
-      group.toLowerCase().includes(search.toLowerCase())
-    )
+    .filter(([group]) => group.toLowerCase().includes(search.toLowerCase()))
     .sort(([a], [b]) => (sortOrder === "asc" ? a.localeCompare(b) : b.localeCompare(a)));
 
   return (
     <div className="container py-5">
       <h2 className="text-center text-danger fw-bold mb-4">
-        Blood Inventory — {inventory.bloodBankName || "Global"}
+        Blood Inventory � {inventory.bloodBankName || "Your Institute"}
       </h2>
 
-      {/* 🔍 Search + Sort */}
+      {/* Search + Sort */}
       <div className="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
         <input
           type="text"
@@ -148,10 +86,9 @@ export default function Inventory() {
         </select>
       </div>
 
-      {/* 🩸 Total Count Display */}
+      {/* Total Count Display */}
       <div className="alert alert-light border text-center fw-semibold shadow-sm">
-        Total Available Units:{" "}
-        <span className="text-danger fw-bold">{totalUnits}</span>
+        Total Available Units: <span className="text-danger fw-bold">{totalUnits}</span>
       </div>
 
       {/* Inventory Cards */}
@@ -168,9 +105,7 @@ export default function Inventory() {
               <small className="text-muted">Units</small>
 
               {units < 5 && (
-                <span className="badge bg-warning text-dark mt-2">
-                  Low Stock ⚠️
-                </span>
+                <span className="badge bg-warning text-dark mt-2">Low Stock</span>
               )}
             </div>
           </div>

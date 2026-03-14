@@ -31,6 +31,49 @@ async function getInventory(req, res) {
   }
 }
 
+// GET global inventory totals across all institutes
+async function getGlobalInventory(req, res) {
+  try {
+    const groups = {
+      "A+": 0,
+      "A-": 0,
+      "B+": 0,
+      "B-": 0,
+      "O+": 0,
+      "O-": 0,
+      "AB+": 0,
+      "AB-": 0,
+    };
+    const list = await Inventory.find({});
+    let lastUpdated = null;
+
+    list.forEach((inv) => {
+      const g = inv.groups || {};
+      Object.keys(groups).forEach((key) => {
+        const val = g.get ? g.get(key) : g[key];
+        groups[key] += Number(val || 0);
+      });
+      if (inv.lastUpdated) {
+        if (!lastUpdated || inv.lastUpdated > lastUpdated) {
+          lastUpdated = inv.lastUpdated;
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      inventory: {
+        bloodBankName: "Global Inventory",
+        groups,
+        lastUpdated,
+      },
+    });
+  } catch (err) {
+    console.error("getGlobalInventory error:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
 // PATCH inventory
 async function updateInventory(req, res) {
   const { updates } = req.body;
@@ -97,4 +140,4 @@ async function updateInventory(req, res) {
   }
 }
 
-module.exports = { getInventory, updateInventory };
+module.exports = { getInventory, getGlobalInventory, updateInventory };

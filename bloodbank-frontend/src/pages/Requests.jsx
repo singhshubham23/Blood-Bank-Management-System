@@ -19,7 +19,7 @@ export default function Requests() {
       setLoading(true);
 
       try {
-        // USERS → only their own requests
+        // USERS -> only their own requests
         if (user.role === "user") {
           const res = await api.get("/requests/my");
           setList(res.data || []);
@@ -38,7 +38,7 @@ export default function Requests() {
     load();
   }, [user]);
 
-  if (!user) return <h4 className="text-center mt-5">Please Login ❗</h4>;
+  if (!user) return <h4 className="text-center mt-5">Please Login</h4>;
 
   if (loading)
     return (
@@ -110,6 +110,7 @@ export default function Requests() {
             <option value="">All Types</option>
             <option value="DONATE">DONATION</option>
             <option value="RECEIVE">REQUEST</option>
+            <option value="ADMIN_SUPPLY">ADMIN SUPPLY</option>
           </select>
         </div>
       </div>
@@ -125,7 +126,13 @@ export default function Requests() {
               <div className="card shadow-sm h-100 border-0">
                 <div className="card-body">
                   <h5 className="card-title text-primary d-flex justify-content-between">
-                    <span>{r.requestType === "DONATE" ? "💉 DONATE" : "🩸 RECEIVE"}</span>
+                    <span>
+                      {r.requestType === "DONATE"
+                        ? "DONATE"
+                        : r.requestType === "RECEIVE"
+                          ? "RECEIVE"
+                          : "ADMIN SUPPLY"}
+                    </span>
                     <span className="text-danger fw-bold">{r.bloodGroup}</span>
                   </h5>
 

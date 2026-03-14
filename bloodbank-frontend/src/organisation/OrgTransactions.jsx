@@ -1,6 +1,6 @@
 // OrgTransactions.jsx
 import React, { useEffect, useState } from "react";
-import api from "../../api/axios";
+import api from "../api/axios";
 import { ReceiptCutoff } from "react-bootstrap-icons";
 
 export default function OrgTransactions() {
@@ -36,7 +36,11 @@ export default function OrgTransactions() {
                 <td className="text-danger fw-bold">{t.bloodGroup}</td>
                 <td>{t.units}</td>
                 <td>{t.user?.name}</td>
-                <td>{new Date(t.timestamp).toLocaleString()}</td>
+                <td>
+                  {t.timestamp || t.createdAt
+                    ? new Date(t.timestamp || t.createdAt).toLocaleString()
+                    : "N/A"}
+                </td>
               </tr>
             ))}
           </tbody>

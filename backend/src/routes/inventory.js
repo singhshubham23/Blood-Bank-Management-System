@@ -4,8 +4,19 @@ const router = express.Router();
 const { ensureAuth, ensureRole } = require("../middleware/auth");
 const inventoryController = require("../controllers/inventoryController");
 
-// anyone authenticated can view inventory (but orgs see their org via query)
-router.get("/", ensureAuth, inventoryController.getInventory);
+// only organisations/hospitals can view their inventory
+router.get(
+  "/",
+  ensureAuth,
+  ensureRole(["organisation", "hospital"]),
+  inventoryController.getInventory
+);
+router.get(
+  "/global",
+  ensureAuth,
+  ensureRole(["admin"]),
+  inventoryController.getGlobalInventory
+);
 
 // Only admin or organisation/hospital can update inventory
 router.patch(

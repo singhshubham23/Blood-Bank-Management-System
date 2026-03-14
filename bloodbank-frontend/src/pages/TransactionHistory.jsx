@@ -154,7 +154,10 @@ export default function TransactionHistory() {
                       <strong>Units Transferred:</strong> {t.units}
                     </p>
                     <p className="card-text mb-1">
-                      <strong>Date:</strong> {new Date(t.timestamp).toLocaleString()}
+                      <strong>Date:</strong>{" "}
+                      {t.timestamp || t.createdAt
+                        ? new Date(t.timestamp || t.createdAt).toLocaleString()
+                        : "N/A"}
                     </p>
                     <p className="card-text mb-1">
                       <strong>Facility:</strong> {t.organizationName || "Central Blood Bank"}

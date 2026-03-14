@@ -33,7 +33,7 @@ router.get("/transactions", async (req, res) => {
   try {
     const tx = await Transaction.find({})
       .populate("user", "name email phone")
-      .sort({ createdAt: -1 });
+      .sort({ timestamp: -1, createdAt: -1 });
 
     res.json(tx);
   } catch (err) {
@@ -44,10 +44,48 @@ router.get("/transactions", async (req, res) => {
 // ============ GET GLOBAL INVENTORY ============
 router.get("/inventory", async (req, res) => {
   try {
-    const inv = await Inventory.find({});
+    const inv = await Inventory.find({})
+      .populate("orgId", "name email role")
+      .sort({ bloodBankName: 1 });
     res.json(inv);
   } catch (err) {
     res.status(500).json({ error: "Failed to load inventory" });
+  }
+});
+
+// ============ SEARCH INVENTORY BY GROUP ============
+router.get("/inventory/search", async (req, res) => {
+  try {
+    const { bloodGroup, units } = req.query;
+    const allowedGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
+    if (!bloodGroup || !allowedGroups.includes(bloodGroup)) {
+      return res.status(400).json({ error: "Invalid bloodGroup" });
+    }
+    const nUnits = Number(units || 1);
+    if (!Number.isInteger(nUnits) || nUnits <= 0) {
+      return res.status(400).json({ error: "Units must be a positive integer" });
+    }
+
+    const list = await Inventory.find({
+      orgId: { $ne: null },
+      [`groups.${bloodGroup}`]: { $gte: nUnits },
+    })
+      .populate("orgId", "name phone email role")
+      .sort({ [`groups.${bloodGroup}`]: -1 });
+
+    res.json({
+      success: true,
+      results: list.map((inv) => ({
+        inventoryId: inv._id,
+        orgId: inv.orgId?._id,
+        instituteName: inv.orgId?.name || inv.bloodBankName || "Unknown",
+        institutePhone: inv.orgId?.phone || "Not Provided",
+        instituteEmail: inv.orgId?.email || "Not Provided",
+        units: inv.groups?.get ? inv.groups.get(bloodGroup) : inv.groups?.[bloodGroup] || 0,
+      })),
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to search inventory" });
   }
 });
 

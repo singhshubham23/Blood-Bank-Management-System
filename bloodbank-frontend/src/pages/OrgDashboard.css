@@ -1,0 +1,251 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap");
+
+.org-dashboard {
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, #ffe7ea, #fff6f7 40%, #f4f0ff 100%);
+  min-height: 100vh;
+  padding: 32px 24px 60px;
+}
+
+.org-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 28px;
+}
+
+.org-hero-content {
+  background: linear-gradient(135deg, #b31237, #6f1d1b);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.org-hero-content::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.org-badge {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+}
+
+.org-hero-content h1 {
+  font-family: "Fraunces", serif;
+  font-size: 2.3rem;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.org-hero-content h1 span {
+  display: block;
+  font-size: 1.3rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+.org-hero-content p {
+  margin: 0 0 18px;
+  opacity: 0.9;
+}
+
+.org-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.org-hero-card {
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(90, 24, 24, 0.12);
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.org-hero-metric {
+  background: #f8f4ff;
+  border-radius: 18px;
+  padding: 16px;
+  text-align: left;
+}
+
+.org-hero-metric span {
+  font-size: 0.85rem;
+  color: #5f4b66;
+}
+
+.org-hero-metric strong {
+  display: block;
+  font-size: 1.6rem;
+  color: #2b0b0b;
+}
+
+.org-hero-metric.small strong {
+  font-size: 0.95rem;
+}
+
+.org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.org-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 15px 30px rgba(20, 10, 40, 0.08);
+}
+
+.org-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: #3a0f1c;
+}
+
+.org-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.org-action {
+  text-decoration: none;
+  background: #f7edf0;
+  padding: 12px;
+  border-radius: 14px;
+  color: #5a1320;
+  font-weight: 600;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.org-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(90, 10, 20, 0.15);
+}
+
+.org-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.org-tags span {
+  background: #ffe6d9;
+  color: #7a2e1d;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.org-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.org-list li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #3b1c25;
+}
+
+.org-list em {
+  font-style: normal;
+  color: #a33a4c;
+}
+
+.org-list strong {
+  color: #1a6d3b;
+}
+
+.muted {
+  color: #6f6f6f;
+  font-size: 0.9rem;
+}
+
+.org-supply {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 20px;
+}
+
+.org-supply-form,
+.org-supply-panel {
+  background: #fff;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 20px 30px rgba(40, 12, 32, 0.08);
+}
+
+.org-supply-panel ul {
+  padding-left: 18px;
+  margin: 12px 0 16px;
+}
+
+.org-supply-panel li {
+  margin-bottom: 8px;
+}
+
+.org-cta {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f0f4ff;
+  border-radius: 14px;
+  padding: 12px 16px;
+}
+
+.org-cta a {
+  color: #1b4fd8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 992px) {
+  .org-hero,
+  .org-supply {
+    grid-template-columns: 1fr;
+  }
+
+  .org-hero-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .org-hero-card {
+    grid-template-columns: 1fr;
+  }
+
+  .org-actions {
+    grid-template-columns: 1fr;
+  }
+}

@@ -11,14 +11,7 @@ export default function DigitalCardPage() {
         </p>
       </div>
 
-      <div className="d-flex justify-content-center">
-        <div
-          className="card shadow-sm border-0 p-4"
-          style={{ maxWidth: "400px", width: "100%" }}
-        >
-          <DigitalCard />
-        </div>
-      </div>
+      <DigitalCard />
     </div>
   );
 }

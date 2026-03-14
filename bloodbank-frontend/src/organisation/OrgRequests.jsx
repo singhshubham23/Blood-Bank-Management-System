@@ -1,6 +1,6 @@
 // OrgRequests.jsx
 import React, { useEffect, useState } from "react";
-import api from "../../api/axios";
+import api from "../api/axios";
 import { ClipboardPulse } from "react-bootstrap-icons";
 
 export default function OrgRequests() {

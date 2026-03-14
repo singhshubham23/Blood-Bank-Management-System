@@ -10,6 +10,9 @@ export default function Navbar() {
     location.pathname === path
       ? "active fw-bold text-light"
       : "text-light opacity-75";
+  const isInventoryActive =
+    location.pathname === "/inventory" || location.pathname === "/admin/inventory";
+  const isGlobalInventoryActive = location.pathname === "/global-inventory";
 
   if (loadingAuth) return null;
 
@@ -48,12 +51,25 @@ export default function Navbar() {
               </Link>
             </li>
 
+            {user?.role === "admin" && (
+              <li className="nav-item">
+                <Link
+                  className={`nav-link ${
+                    isGlobalInventoryActive ? "active fw-bold text-light" : "text-light opacity-75"
+                  }`}
+                  to="/global-inventory"
+                >
+                  <i className="bi bi-bar-chart-line me-1"></i> Global Inventory
+                </Link>
+              </li>
+            )}
+
             {/* -------- INVENTORY: Only Admin + Org -------- */}
             {(isAdmin || isOrg) && (
               <li className="nav-item">
                 <Link
-                  className={`nav-link ${isActive("/inventory")}`}
-                  to="/inventory"
+                  className={`nav-link ${isInventoryActive ? "active fw-bold text-light" : "text-light opacity-75"}`}
+                  to={isAdmin ? "/admin/inventory" : "/inventory"}
                 >
                   <i className="bi bi-box-seam me-1"></i> Inventory
                 </Link>
@@ -71,6 +87,11 @@ export default function Navbar() {
                 </button>
 
                 <ul className="dropdown-menu dropdown-menu-end bg-danger border-0 shadow">
+                  <li>
+                    <Link className="dropdown-item text-light" to="/admin/dashboard">
+                      <i className="bi bi-speedometer2 me-2"></i> Admin Home
+                    </Link>
+                  </li>
 
                   <li>
                     <Link className={`dropdown-item text-light`} to="/admin/requests">
@@ -81,6 +102,11 @@ export default function Navbar() {
                   <li>
                     <Link className="dropdown-item text-light" to="/admin/transactions">
                       <i className="bi bi-cash-stack me-2"></i> Transactions
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item text-light" to="/admin/inventory">
+                      <i className="bi bi-box-seam me-2"></i> Inventory
                     </Link>
                   </li>
 
@@ -105,15 +131,20 @@ export default function Navbar() {
                 </button>
 
                 <ul className="dropdown-menu dropdown-menu-end bg-danger border-0 shadow">
+                  <li>
+                    <Link className="dropdown-item text-light" to="/org/dashboard">
+                      <i className="bi bi-speedometer2 me-2"></i> Org Home
+                    </Link>
+                  </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/requests">
+                    <Link className="dropdown-item text-light" to="/org/requests">
                       <i className="bi bi-card-checklist me-2"></i> Requests
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/transactions">
+                    <Link className="dropdown-item text-light" to="/org/transactions">
                       <i className="bi bi-cash-stack me-2"></i> Transactions
                     </Link>
                   </li>
@@ -139,6 +170,11 @@ export default function Navbar() {
                 </button>
 
                 <ul className="dropdown-menu dropdown-menu-end bg-danger border-0 shadow">
+                  <li>
+                    <Link className="dropdown-item text-light" to="/dashboard">
+                      <i className="bi bi-speedometer2 me-2"></i> Dashboard
+                    </Link>
+                  </li>
 
                   <li>
                     <Link className="dropdown-item text-light" to="/requests">

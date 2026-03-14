@@ -34,8 +34,14 @@ const createRequest = async (req, res) => {
       return res.status(400).json({ error: "Invalid bloodGroup" });
 
     // validate requestType
-    if (!["DONATE", "RECEIVE"].includes(requestType))
+    if (!["DONATE", "RECEIVE", "ADMIN_SUPPLY"].includes(requestType))
       return res.status(400).json({ error: "Invalid requestType" });
+
+    if (requestType === "ADMIN_SUPPLY") {
+      if (!["organisation", "hospital"].includes(req.user.role)) {
+        return res.status(403).json({ error: "Only institutes can request admin supply" });
+      }
+    }
 
     // validate units
     const nUnits = Number(units);
@@ -44,7 +50,7 @@ const createRequest = async (req, res) => {
 
     const newReq = await Request.create({
       requester: req.user._id,
-      requestToOrg: requestToOrg || null,
+      requestToOrg: requestType === "ADMIN_SUPPLY" ? null : requestToOrg || null,
       requestType,
       bloodGroup,
       units: nUnits,
@@ -121,6 +127,80 @@ const processRequest = async (req, res) => {
     // APPROVE
     if (action === "APPROVE") {
       if (request.status !== "PENDING") throw new Error("Only pending requests can be approved");
+
+      if (request.requestType === "ADMIN_SUPPLY") {
+        if (req.user.role !== "admin") throw new Error("Only admin can approve supply requests");
+        if (!orgId || !mongoose.Types.ObjectId.isValid(orgId))
+          throw new Error("orgId (source institute) is required");
+
+        const sourceOrgId = mongoose.Types.ObjectId(orgId);
+        const sourceFilter = { orgId: sourceOrgId };
+        const destFilter = { orgId: request.requester };
+
+        let sourceInv = await Inventory.findOne(sourceFilter).session(session);
+        if (!sourceInv) throw new Error("Source institute inventory not found");
+
+        let destInv = await Inventory.findOne(destFilter).session(session);
+        if (!destInv) {
+          const created = await Inventory.create(
+            [
+              {
+                orgId: request.requester,
+                bloodBankName: undefined,
+                groups: { ...DEFAULT_GROUPS },
+              },
+            ],
+            { session }
+          );
+          destInv = created[0];
+        }
+
+        const groupKey = request.bloodGroup;
+        const units = Number(request.units);
+        const sourceCurrent = getCurrent(sourceInv, groupKey);
+        if (sourceCurrent < units) throw new Error("Insufficient units in source inventory");
+
+        await Inventory.updateOne(
+          sourceFilter,
+          { $inc: { [`groups.${groupKey}`]: -units }, $set: { lastUpdated: new Date() } },
+          { session }
+        );
+        await Inventory.updateOne(
+          destFilter,
+          { $inc: { [`groups.${groupKey}`]: units }, $set: { lastUpdated: new Date() } },
+          { session }
+        );
+
+        await Transaction.create(
+          [
+            {
+              user: req.user._id,
+              orgId: sourceOrgId,
+              type: "OUT",
+              bloodGroup: groupKey,
+              units,
+              relatedRequest: request._id,
+            },
+            {
+              user: request.requester,
+              orgId: request.requester,
+              type: "IN",
+              bloodGroup: groupKey,
+              units,
+              relatedRequest: request._id,
+            },
+          ],
+          { session }
+        );
+
+        request.status = "APPROVED";
+        request.processedBy = req.user._id;
+        await request.save({ session });
+
+        await session.commitTransaction();
+
+        return res.json(request);
+      }
 
       // Decide which inventory doc to operate on:
       // prefer request.requestToOrg -> orgId param -> central (null)

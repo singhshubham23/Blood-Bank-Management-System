@@ -273,6 +273,9 @@ async function processRequest(req, res) {
     if (action === "APPROVE") {
       if (request.status !== "PENDING")
         throw new Error("Only pending requests can be approved");
+      if (request.requestType === "ADMIN_SUPPLY") {
+        throw new Error("Admin supply requests must be approved by admin");
+      }
 
       const targetOrgId = request.requestToOrg || req.user._id;
       const invFilter = targetOrgId ? { orgId: targetOrgId } : { orgId: null };

@@ -1,96 +1,3 @@
-// import React, { useEffect, useState, useContext } from "react";
-// import api from "../api/axios";
-// import { AuthContext } from "../context/AuthContext";
-
-// export default function RequestApproval() {
-//   const { user } = useContext(AuthContext);
-//   const [list, setList] = useState([]);
-
-//   useEffect(() => {
-//     if (!user || user.role !== "admin") return;
-
-//     const load = async () => {
-//       try {
-//         const res = await api.get("/admin/requests");
-//         setList(res.data || []);
-//       } catch (err) {
-//         alert("Failed to load requests");
-//       }
-//     };
-
-//     load();
-//   }, [user]);
-
-//   const process = async (id, status) => {
-//     try {
-//       await api.patch(`/requests/${id}/process`, { status });
-//       setList((prev) =>
-//         prev.map((r) => (r._id === id ? { ...r, status } : r))
-//       );
-//     } catch (err) {
-//       alert("Action failed");
-//     }
-//   };
-
-//   if (!user || user.role !== "admin")
-//     return <h4 className="text-center mt-5 text-danger">Admin Only ❗</h4>;
-
-//   return (
-//     <div className="container py-4">
-//       <h2 className="text-danger text-center mb-4">Request Approval</h2>
-
-//       <div className="row g-3">
-//         {list.map((r) => (
-//           <div key={r._id} className="col-md-4">
-//             <div className="card shadow-sm h-100">
-//               <div className="card-body">
-//                 <h5 className="card-title text-primary">
-//                   {r.requestType} — {r.bloodGroup} ({r.units})
-//                 </h5>
-
-//                 <p><strong>By:</strong> {r.requester?.name}</p>
-
-//                 <p>
-//                   <strong>Status:</strong>{" "}
-//                   <span
-//                     className={`badge ${
-//                       r.status === "PENDING"
-//                         ? "bg-warning"
-//                         : r.status === "APPROVED"
-//                         ? "bg-success"
-//                         : "bg-danger"
-//                     }`}
-//                   >
-//                     {r.status}
-//                   </span>
-//                 </p>
-
-//                 {r.status === "PENDING" && (
-//                   <div className="d-flex gap-2 mt-3">
-//                     <button
-//                       className="btn btn-success btn-sm w-50"
-//                       onClick={() => process(r._id, "APPROVED")}
-//                     >
-//                       Approve
-//                     </button>
-
-//                     <button
-//                       className="btn btn-danger btn-sm w-50"
-//                       onClick={() => process(r._id, "REJECTED")}
-//                     >
-//                       Reject
-//                     </button>
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
 import React, { useEffect, useState, useContext } from "react";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
@@ -104,6 +11,11 @@ export default function RequestApproval() {
   const [filterGroup, setFilterGroup] = useState("");
   const [filterType, setFilterType] = useState("");
   const [searchText, setSearchText] = useState("");
+
+  // Admin supply search
+  const [availabilityById, setAvailabilityById] = useState({});
+  const [loadingAvailabilityById, setLoadingAvailabilityById] = useState({});
+  const [selectedSourceById, setSelectedSourceById] = useState({});
 
   useEffect(() => {
     if (!user || user.role !== "admin") return;
@@ -121,25 +33,40 @@ export default function RequestApproval() {
     load();
   }, [user]);
 
-  const handleAction = async (id, action) => {
+  const handleAction = async (id, action, sourceOrgId = null) => {
     try {
-      const res = await api.patch(`/requests/${id}/process`, { action });
-      setRequests(prev =>
-        prev.map(r => (r._id === id ? { ...r, status: res.data.status } : r))
+      const payload = sourceOrgId ? { action, orgId: sourceOrgId } : { action };
+      const res = await api.patch(`/requests/${id}/process`, payload);
+      setRequests((prev) =>
+        prev.map((r) => (r._id === id ? { ...r, status: res.data.status } : r))
       );
     } catch (err) {
       console.log(err.response?.data);
-      alert("Action failed");
+      alert(err?.response?.data?.error || "Action failed");
     }
   };
 
+  const fetchAvailability = async (req) => {
+    setLoadingAvailabilityById((p) => ({ ...p, [req._id]: true }));
+    try {
+      const res = await api.get("/admin/inventory/search", {
+        params: { bloodGroup: req.bloodGroup, units: req.units },
+      });
+      setAvailabilityById((p) => ({ ...p, [req._id]: res.data.results || [] }));
+      if ((res.data.results || []).length > 0) {
+        setSelectedSourceById((p) => ({ ...p, [req._id]: res.data.results[0].orgId }));
+      }
+    } catch (err) {
+      alert(err?.response?.data?.error || "Failed to search inventory");
+    } finally {
+      setLoadingAvailabilityById((p) => ({ ...p, [req._id]: false }));
+    }
+  };
 
   // Filter Logic
   const filtered = requests.filter((r) => {
-    // 1. Must match the current tab (Status)
     if (r.status !== tab) return false;
 
-    // 2. Secondary Filters
     const matchesGroup = filterGroup ? r.bloodGroup === filterGroup : true;
     const matchesType = filterType ? r.requestType === filterType : true;
     const matchesSearch = searchText
@@ -150,26 +77,25 @@ export default function RequestApproval() {
   });
 
   if (!user || user.role !== "admin")
-    return <h4 className="text-center mt-5 text-danger fw-bold">Admin Only ❗</h4>;
+    return <h4 className="text-center mt-5 text-danger fw-bold">Admin Only</h4>;
+
+  const colCount = 6 + (tab === "PENDING" ? 1 : 0);
 
   return (
     <div className="container py-4">
-      <h2 className="text-danger text-center fw-bold mb-4">
-        Request Approval Panel
-      </h2>
+      <h2 className="text-danger text-center fw-bold mb-4">Request Approval Panel</h2>
 
       {/* Tabs Section (Primary Filter) */}
       <ul className="nav nav-tabs justify-content-center mb-4">
         {["PENDING", "APPROVED", "REJECTED"].map((t) => (
           <li className="nav-item" key={t}>
             <button
-              className={`nav-link fw-semibold ${tab === t ? "active" : ""
-                } text-dark`}
+              className={`nav-link fw-semibold ${tab === t ? "active" : ""} text-dark`}
               onClick={() => setTab(t)}
             >
-              {t === "PENDING" && "⏳ Pending"}
-              {t === "APPROVED" && "🟢 Approved"}
-              {t === "REJECTED" && "🔴 Rejected"}
+              {t === "PENDING" && "Pending"}
+              {t === "APPROVED" && "Approved"}
+              {t === "REJECTED" && "Rejected"}
             </button>
           </li>
         ))}
@@ -207,6 +133,7 @@ export default function RequestApproval() {
             <option value="">All Types</option>
             <option value="DONATE">DONATION</option>
             <option value="RECEIVE">REQUEST</option>
+            <option value="ADMIN_SUPPLY">ADMIN SUPPLY</option>
           </select>
         </div>
       </div>
@@ -218,6 +145,7 @@ export default function RequestApproval() {
             <thead className="table-dark">
               <tr>
                 <th>Requester</th>
+                <th>Contact</th>
                 <th>Blood Group</th>
                 <th>Units</th>
                 <th>Type</th>
@@ -226,63 +154,115 @@ export default function RequestApproval() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r) => (
-                <tr key={r._id}>
-                  <td className="fw-semibold">{r.requester?.name}</td>
-                  <td className="text-danger fw-bold">{r.bloodGroup}</td>
-                  <td>{r.units}</td>
-                  <td>{r.requestType}</td>
-                  <td>
-                    <span
-                      className={`badge ${r.status === "PENDING"
-                          ? "bg-warning text-dark"
-                          : r.status === "APPROVED"
-                            ? "bg-success"
-                            : "bg-danger"
-                        }`}
-                    >
-                      {r.status}
-                    </span>
-                  </td>
+              {filtered.map((r) => {
+                const isSupply = r.requestType === "ADMIN_SUPPLY";
+                const availability = availabilityById[r._id] || null;
+                const loadingAvail = loadingAvailabilityById[r._id];
+                const selectedSource = selectedSourceById[r._id] || "";
 
-                  {/* Show actions only when pending */}
-                  {tab === "PENDING" && (
-                    <td className="d-flex justify-content-center gap-2">
-                      <button
-                        className="btn btn-sm btn-success"
-                        onClick={() => handleAction(r._id, "APPROVE")}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleAction(r._id, "REJECT")}
-                      >
-                        Reject
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              ))}
+                return (
+                  <React.Fragment key={r._id}>
+                    <tr>
+                      <td className="fw-semibold">{r.requester?.name || "Unknown"}</td>
+                      <td>{r.requester?.phone || "Not Provided"}</td>
+                      <td className="text-danger fw-bold">{r.bloodGroup}</td>
+                      <td>{r.units}</td>
+                      <td>{r.requestType}</td>
+                      <td>
+                        <span
+                          className={`badge ${r.status === "PENDING"
+                              ? "bg-warning text-dark"
+                              : r.status === "APPROVED"
+                                ? "bg-success"
+                                : "bg-danger"
+                            }`}
+                        >
+                          {r.status}
+                        </span>
+                      </td>
+
+                      {tab === "PENDING" && (
+                        <td className="d-flex justify-content-center gap-2">
+                          {isSupply && (
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={() => fetchAvailability(r)}
+                              disabled={loadingAvail}
+                            >
+                              {loadingAvail ? "Searching..." : "Find Availability"}
+                            </button>
+                          )}
+                          <button
+                            className="btn btn-sm btn-success"
+                            onClick={() =>
+                              isSupply
+                                ? handleAction(r._id, "APPROVE", selectedSource)
+                                : handleAction(r._id, "APPROVE")
+                            }
+                            disabled={isSupply && !selectedSource}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => handleAction(r._id, "REJECT")}
+                          >
+                            Reject
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+
+                    {isSupply && availability && (
+                      <tr>
+                        <td colSpan={colCount} className="text-start bg-light">
+                          <div className="d-flex flex-column gap-2">
+                            <div className="fw-semibold">Available Institutes</div>
+                            {availability.length === 0 ? (
+                              <div className="text-muted">No institute has enough units.</div>
+                            ) : (
+                              <div className="d-flex flex-column gap-2">
+                                <select
+                                  className="form-select"
+                                  value={selectedSource}
+                                  onChange={(e) =>
+                                    setSelectedSourceById((p) => ({
+                                      ...p,
+                                      [r._id]: e.target.value,
+                                    }))
+                                  }
+                                >
+                                  {availability.map((a) => (
+                                    <option key={a.orgId} value={a.orgId}>
+                                      {a.instituteName} | {a.institutePhone} | Units: {a.units}
+                                    </option>
+                                  ))}
+                                </select>
+                                <div className="small text-muted">
+                                  Select a source institute, then click Approve to transfer units.
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
       ) : (
-        // Empty State View
         <div className="text-center mt-5">
           <i className="bi bi-inbox fs-1 text-secondary"></i>
-          <h5 className="mt-3 text-muted">
-            No {tab.toLowerCase()} requests at the moment
-          </h5>
+          <h5 className="mt-3 text-muted">No {tab.toLowerCase()} requests at the moment</h5>
         </div>
       )}
 
       <div className="text-center mt-5">
-        <span className="badge bg-info text-dark px-4 py-2">
-          Real-time updates coming soon 🚀
-        </span>
+        <span className="badge bg-info text-dark px-4 py-2">Real-time updates coming soon</span>
       </div>
     </div>
   );
 }
-

@@ -16,12 +16,16 @@ import AdminDashboard from "./admin-pages/AdminDashboard";
 import RequestApproval from "./admin-pages/RequestApprove";
 import AdminTransactions from "./admin-pages/Transactions";
 import RegisterFacility from "./admin-pages/RegisterFacility";
+import AdminInventory from "./admin-pages/Inventory";
 
 // ORGANISATION / HOSPITAL DASHBOARD
 import OrgDashboard from "./pages/OrgDashboard";
+import OrgRequests from "./organisation/OrgRequests";
+import OrgTransactions from "./organisation/OrgTransactions";
 
 import { AuthContext } from "./context/AuthContext";
 import Inventory from "./pages/Inventory";
+import GlobalInventory from "./pages/GlobalInventory";
 
 function Protected({ children, roles }) {
   const { user, loadingAuth } = useContext(AuthContext);
@@ -68,8 +72,16 @@ export default function App() {
         <Route
           path="/inventory"
           element={
-            <Protected roles={["admin", "organisation", "hospital"]}>
+            <Protected roles={["organisation", "hospital"]}>
               <Inventory />
+            </Protected>
+          }
+        />
+        <Route
+          path="/global-inventory"
+          element={
+            <Protected roles={["admin"]}>
+              <GlobalInventory />
             </Protected>
           }
         />
@@ -78,7 +90,7 @@ export default function App() {
         <Route
           path="/dashboard"
           element={
-            <Protected>
+            <Protected roles={["user"]}>
               <Dashboard />
             </Protected>
           }
@@ -88,7 +100,7 @@ export default function App() {
         <Route
           path="/requests"
           element={
-            <Protected>
+            <Protected roles={["user"]}>
               <Requests />
             </Protected>
           }
@@ -97,7 +109,7 @@ export default function App() {
         <Route
           path="/transactions"
           element={
-            <Protected>
+            <Protected roles={["user"]}>
               <TransactionHistory />
             </Protected>
           }
@@ -115,7 +127,7 @@ export default function App() {
         <Route
           path="/digital-card"
           element={
-            <Protected>
+            <Protected roles={["user"]}>
               <DigitalCardPage />
             </Protected>
           }
@@ -157,6 +169,14 @@ export default function App() {
             </Protected>
           }
         />
+        <Route
+          path="/admin/inventory"
+          element={
+            <Protected roles={["admin"]}>
+              <AdminInventory />
+            </Protected>
+          }
+        />
 
         {/* -------------- ORGANISATION / HOSPITAL ROUTES -------------- */}
         <Route
@@ -172,7 +192,7 @@ export default function App() {
           path="/org/requests"
           element={
             <Protected roles={["organisation", "hospital"]}>
-              <Requests />
+              <OrgRequests />
             </Protected>
           }
         />
@@ -181,7 +201,7 @@ export default function App() {
           path="/org/transactions"
           element={
             <Protected roles={["organisation", "hospital"]}>
-              <TransactionHistory />
+              <OrgTransactions />
             </Protected>
           }
         />

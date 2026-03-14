@@ -78,9 +78,11 @@ export default function Transactions() {
     const load = async () => {
       try {
         const res = await api.get("/admin/transactions");
-        const sorted = (res.data || []).sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
+        const sorted = (res.data || []).sort((a, b) => {
+          const aDate = new Date(a.timestamp || a.createdAt || 0);
+          const bDate = new Date(b.timestamp || b.createdAt || 0);
+          return bDate - aDate;
+        });
         setTx(sorted);
       } catch (err) {
         alert("Failed to load transactions");
@@ -220,7 +222,11 @@ export default function Transactions() {
                   data-group={t.bloodGroup}
                   data-units={t.units}
                   data-type={t.type === "IN" || t.type === "DONATION" ? "DONATION" : "REQUEST"}
-                  data-date={t.createdAt || t.date ? new Date(t.createdAt || t.date).toLocaleString() : "N/A"}
+                  data-date={
+                    t.timestamp || t.createdAt
+                      ? new Date(t.timestamp || t.createdAt).toLocaleString()
+                      : "N/A"
+                  }
                 >
                   <td className="fw-semibold">{t.user?.name || "Unknown"}</td>
 
@@ -244,8 +250,8 @@ export default function Transactions() {
                   </td>
 
                   <td>
-                    {t.createdAt || t.date
-                      ? new Date(t.createdAt || t.date).toLocaleString()
+                    {t.timestamp || t.createdAt
+                      ? new Date(t.timestamp || t.createdAt).toLocaleString()
                       : "N/A"}
                   </td>
 

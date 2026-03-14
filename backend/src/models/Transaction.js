@@ -9,7 +9,7 @@ const TransactionSchema = new mongoose.Schema({
   units: { type: Number, required: true, min: 1 },
   relatedRequest: { type: mongoose.Schema.Types.ObjectId, ref: "Request" },
   timestamp: { type: Date, default: Date.now },
-});
+}, { timestamps: true });
 
 TransactionSchema.index({ user: 1 });
 TransactionSchema.index({ orgId: 1 });
