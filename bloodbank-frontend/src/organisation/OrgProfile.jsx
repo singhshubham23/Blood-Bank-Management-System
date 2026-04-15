@@ -1,8 +1,7 @@
 // OrgProfile.jsx
 import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
-import { PersonCircle, PencilSquare, CheckCircle } from "react-bootstrap-icons";
-import api from "../../api/axios";
+import { AuthContext } from "../context/AuthContext";
+import api from "../api/axios";
 
 export default function OrgProfile() {
   const { user, setUser } = useContext(AuthContext);
@@ -37,7 +36,7 @@ export default function OrgProfile() {
 
       <div className="card shadow-lg border-0 p-4 rounded-4 w-100" style={{ maxWidth: 500 }}>
         <div className="text-center mb-3">
-          <PersonCircle size={80} className="text-primary" />
+          <i className="bi bi-person-circle text-primary" style={{ fontSize: "80px" }}></i>
           <h4 className="fw-bold mt-2 text-primary">Organisation Profile</h4>
         </div>
 
@@ -64,7 +63,7 @@ export default function OrgProfile() {
             value={formData.email}
             onChange={handleChange}
           />
-          <small className="text-muted">Email can’t be changed.</small>
+          <small className="text-muted">Email can't be changed.</small>
         </div>
 
         <div className="mb-3">
@@ -90,14 +89,14 @@ export default function OrgProfile() {
             onClick={() => setEdit(true)}
             className="btn btn-warning w-100 d-flex justify-content-center align-items-center gap-2 fw-semibold"
           >
-            <PencilSquare /> Edit Profile
+            <i className="bi bi-pencil-square"></i> Edit Profile
           </button>
         ) : (
           <button
             onClick={saveChanges}
             className="btn btn-success w-100 d-flex justify-content-center align-items-center gap-2 fw-semibold"
           >
-            <CheckCircle /> Save Changes
+            <i className="bi bi-check-circle"></i> Save Changes
           </button>
         )}
       </div>

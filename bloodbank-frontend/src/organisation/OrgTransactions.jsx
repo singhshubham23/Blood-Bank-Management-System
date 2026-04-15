@@ -1,7 +1,6 @@
 // OrgTransactions.jsx
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import { ReceiptCutoff } from "react-bootstrap-icons";
 
 export default function OrgTransactions() {
   const [txs, setTxs] = useState([]);
@@ -14,7 +13,7 @@ export default function OrgTransactions() {
   return (
     <div className="container py-4" style={{ background: "#fffaf7", minHeight: "100vh" }}>
       <div className="d-flex align-items-center gap-2 mb-3">
-        <ReceiptCutoff size={28} className="text-primary" />
+        <i className="bi bi-receipt-cutoff text-primary" style={{ fontSize: "28px" }}></i>
         <h3 className="fw-bold text-primary">Transaction History</h3>
       </div>
 

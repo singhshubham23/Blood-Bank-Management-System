@@ -1,7 +1,6 @@
-// OrgInventory.jsx
+// OrgInventory.jsx (Organisation Manage Inventory)
 import React, { useState, useEffect } from "react";
-import api from "../../api/axios";
-import { PencilSquare } from "react-bootstrap-icons";
+import api from "../api/axios";
 
 export default function OrgInventory() {
   const [inventory, setInventory] = useState(null);
@@ -31,7 +30,7 @@ export default function OrgInventory() {
   return (
     <div className="container py-4" style={{ background: "#fef7f7", minHeight: "100vh" }}>
       <div className="d-flex align-items-center gap-2 mb-3">
-        <PencilSquare className="text-danger" size={28} />
+        <i className="bi bi-pencil-square text-danger" style={{ fontSize: "28px" }}></i>
         <h3 className="fw-bold text-danger">Manage Inventory</h3>
       </div>
 

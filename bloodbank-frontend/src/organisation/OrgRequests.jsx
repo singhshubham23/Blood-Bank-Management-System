@@ -1,7 +1,6 @@
 // OrgRequests.jsx
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import { ClipboardPulse } from "react-bootstrap-icons";
 
 export default function OrgRequests() {
   const [list, setList] = useState([]);
@@ -20,7 +19,7 @@ export default function OrgRequests() {
   return (
     <div className="container py-4" style={{ background: "#f8faff", minHeight: "100vh" }}>
       <div className="d-flex align-items-center gap-2 mb-3">
-        <ClipboardPulse className="text-warning" size={28} />
+        <i className="bi bi-clipboard-pulse text-warning" style={{ fontSize: "28px" }}></i>
         <h3 className="fw-bold text-warning">Manage Requests</h3>
       </div>
 

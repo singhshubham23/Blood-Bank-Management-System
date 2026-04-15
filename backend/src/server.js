@@ -17,6 +17,7 @@ const authRoutes = require("./routes/auth");
 const requestRoutes = require("./routes/requests");
 const inventoryRoutes = require("./routes/inventory");
 const transactionRoutes = require("./routes/transactions");
+const nearbyRoutes = require("./routes/nearby");
 const { setSocket } = require("./utils/socket");
 
 const app = express();
@@ -49,6 +50,7 @@ app.use("/api/inventory", inventoryRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/organisation", organizationRoutes);
+app.use("/api/nearby", nearbyRoutes);
 
 app.get("/", (req, res) => res.json({ ok: true, message: "BloodBank API running" }));
 

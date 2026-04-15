@@ -51,6 +51,15 @@ export default function Navbar() {
               </Link>
             </li>
 
+            {/* -------- NEARBY HELP: LOGGED-IN USERS ONLY -------- */}
+            {user && (
+              <li className="nav-item">
+                <Link className={`nav-link ${isActive("/nearby-help")}`} to="/nearby-help">
+                  <i className="bi bi-geo-alt-fill me-1 animate__animated animate__pulse animate__infinite"></i> Nearby Help
+                </Link>
+              </li>
+            )}
+
             {user?.role === "admin" && (
               <li className="nav-item">
                 <Link
@@ -86,32 +95,32 @@ export default function Navbar() {
                   <i className="bi bi-speedometer2 me-1"></i> Dashboard
                 </button>
 
-                <ul className="dropdown-menu dropdown-menu-end bg-danger border-0 shadow">
+                <ul className="dropdown-menu dropdown-menu-end bb-dropdown-dark border-0 shadow">
                   <li>
-                    <Link className="dropdown-item text-light" to="/admin/dashboard">
+                    <Link className="dropdown-item" to="/admin/dashboard">
                       <i className="bi bi-speedometer2 me-2"></i> Admin Home
                     </Link>
                   </li>
 
                   <li>
-                    <Link className={`dropdown-item text-light`} to="/admin/requests">
+                    <Link className="dropdown-item" to="/admin/requests">
                       <i className="bi bi-check-circle me-2"></i> Approve Requests
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/admin/transactions">
+                    <Link className="dropdown-item" to="/admin/transactions">
                       <i className="bi bi-cash-stack me-2"></i> Transactions
                     </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item text-light" to="/admin/inventory">
+                    <Link className="dropdown-item" to="/admin/inventory">
                       <i className="bi bi-box-seam me-2"></i> Inventory
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/profile">
+                    <Link className="dropdown-item" to="/profile">
                       <i className="bi bi-person-fill me-2"></i> Profile
                     </Link>
                   </li>
@@ -130,27 +139,27 @@ export default function Navbar() {
                   <i className="bi bi-speedometer2 me-1"></i> Dashboard
                 </button>
 
-                <ul className="dropdown-menu dropdown-menu-end bg-danger border-0 shadow">
+                <ul className="dropdown-menu dropdown-menu-end bb-dropdown-dark border-0 shadow">
                   <li>
-                    <Link className="dropdown-item text-light" to="/org/dashboard">
+                    <Link className="dropdown-item" to="/org/dashboard">
                       <i className="bi bi-speedometer2 me-2"></i> Org Home
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/org/requests">
+                    <Link className="dropdown-item" to="/org/requests">
                       <i className="bi bi-card-checklist me-2"></i> Requests
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/org/transactions">
+                    <Link className="dropdown-item" to="/org/transactions">
                       <i className="bi bi-cash-stack me-2"></i> Transactions
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/profile">
+                    <Link className="dropdown-item" to="/profile">
                       <i className="bi bi-person-fill me-2"></i> Profile
                     </Link>
                   </li>
@@ -169,27 +178,27 @@ export default function Navbar() {
                   <i className="bi bi-speedometer2 me-1"></i> Dashboard
                 </button>
 
-                <ul className="dropdown-menu dropdown-menu-end bg-danger border-0 shadow">
+                <ul className="dropdown-menu dropdown-menu-end bb-dropdown-dark border-0 shadow">
                   <li>
-                    <Link className="dropdown-item text-light" to="/dashboard">
+                    <Link className="dropdown-item" to="/dashboard">
                       <i className="bi bi-speedometer2 me-2"></i> Dashboard
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/requests">
+                    <Link className="dropdown-item" to="/requests">
                       <i className="bi bi-card-checklist me-2"></i> My Requests
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/transactions">
+                    <Link className="dropdown-item" to="/transactions">
                       <i className="bi bi-cash-stack me-2"></i> My Transactions
                     </Link>
                   </li>
 
                   <li>
-                    <Link className="dropdown-item text-light" to="/profile">
+                    <Link className="dropdown-item" to="/profile">
                       <i className="bi bi-person-fill me-2"></i> Profile
                     </Link>
                   </li>

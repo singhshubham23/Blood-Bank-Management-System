@@ -10,6 +10,7 @@ import Dashboard from "./pages/DashBoard";
 import Requests from "./pages/Requests";
 import TransactionHistory from "./pages/TransactionHistory";
 import DigitalCardPage from "./pages/DigitalCardPage";
+import NearbyHelp from "./pages/NearbyHelp";
 
 // ADMIN PAGES
 import AdminDashboard from "./admin-pages/AdminDashboard";
@@ -67,6 +68,16 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+
+        {/* NEARBY HELP — requires login (any role) */}
+        <Route
+          path="/nearby-help"
+          element={
+            <Protected>
+              <NearbyHelp />
+            </Protected>
+          }
+        />
 
         {/* ADMIN & ORG ONLY */}
         <Route

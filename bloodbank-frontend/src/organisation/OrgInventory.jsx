@@ -1,6 +1,6 @@
 // OrgInventory.jsx
 import React, { useState, useEffect } from "react";
-import api from "../../api/axios";
+import api from "../api/axios";
 
 export default function OrgInventory() {
   const [inventory, setInventory] = useState(null);

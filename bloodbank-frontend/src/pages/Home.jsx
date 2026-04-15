@@ -1,88 +1,3 @@
-// import React, { useContext } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { AuthContext } from "../context/AuthContext";
-
-// export default function Home() {
-//   const { user } = useContext(AuthContext);
-//   const navigate = useNavigate();
-
-//   const handleStart = () => {
-//     if (!user) return navigate("/register");
-
-//     if (user.role === "admin") {
-//       return navigate("/admin/dashboard"); // Admin home
-//     }
-//     if (user.role === "organisation" || user.role === "hospital") {
-//       return navigate("/org/dashboard"); // Organization home
-//     }
-//     navigate("/dashboard"); // User donation request page
-//   };
-
-//   return (
-//     <div
-//       className="min-vh-100"
-//       style={{ background: "linear-gradient(135deg, #ff4b5c, #ff6f61)" }}
-//     >
-//       <div className="container py-5">
-//         <div className="row align-items-center mb-5">
-//           <div className="col-md-6 text-center text-md-start text-white">
-//             <h1 className="display-4 fw-bold">
-//               Welcome{user ? `, ${user.name || "User"}` : ""} to BloodBank
-//             </h1>
-
-//             <p className="lead mt-3">
-//               Donate or request blood easily. Save lives with just one click.
-//             </p>
-
-//             <div className="mt-4">
-//               {!user ? (
-//                 <>
-//                   <Link className="btn btn-light btn-lg me-3 mb-2 fw-semibold shadow-sm" to="/register">
-//                     Get Started
-//                   </Link>
-//                   <Link className="btn btn-outline-light btn-lg mb-2 fw-semibold" to="/login">
-//                     Login
-//                   </Link>
-//                 </>
-//               ) : (
-//                 <button
-//                   onClick={handleStart}
-//                   className="btn btn-light btn-lg mt-2 fw-semibold shadow-sm"
-//                 >
-//                   Start Saving Lives ❤️
-//                 </button>
-//               )}
-//             </div>
-//           </div>
-
-//           <div className="col-md-6 d-none d-md-block">
-//             <div className="card shadow-lg border-0 p-4">
-//               <h5 className="fw-semibold text-danger">How it Works</h5>
-//               <ol className="list-group-numbered mt-3">
-//                 <li className="list-group-item border-0 p-2">Create an account</li>
-//                 <li className="list-group-item border-0 p-2">Donate or request blood</li>
-//                 <li className="list-group-item border-0 p-2">Organization verifies & updates stock</li>
-//               </ol>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Features */}
-//         <div className="row text-center mb-5">
-//           {["Real-Time Updates", "Safe Community", "Help in Emergencies"].map((title, i) => (
-//             <div key={i} className="col-md-4 mb-4">
-//               <div className="card h-100 shadow-lg border-0 p-4 bg-white rounded-4">
-//                 <h5 className="fw-bold text-danger">{title}</h5>
-//                 <p className="text-secondary">Trusted system for you.</p>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -161,24 +76,40 @@ export default function Home() {
               icon: "bi-heart-pulse-fill",
               title: "Real-Time Stock",
               desc: "Check blood availability instantly",
+              link: null,
             },
             {
               icon: "bi-shield-check",
               title: "Safe & Verified",
               desc: "Trusted donors & organizations only",
+              link: null,
             },
             {
               icon: "bi-geo-alt-fill",
               title: "Nearby Help",
               desc: "Find nearest blood banks in emergency",
+              link: "/nearby-help",
             },
           ].map((f, i) => (
             <div key={i} className="col-md-4 mb-4">
-              <div className="card h-100 p-4 rounded-4 shadow-lg border-0">
-                <i className={`${f.icon} text-danger display-5 mb-3`} />
-                <h5 className="fw-bold">{f.title}</h5>
-                <p className="text-secondary">{f.desc}</p>
-              </div>
+              {f.link ? (
+                <Link to={f.link} className="text-decoration-none">
+                  <div className="card h-100 p-4 rounded-4 shadow-lg border-0 feature-card">
+                    <i className={`${f.icon} text-danger display-5 mb-3`} />
+                    <h5 className="fw-bold text-dark">{f.title}</h5>
+                    <p className="text-secondary">{f.desc}</p>
+                    <span className="badge bg-danger rounded-pill px-3 py-2 mt-2">
+                      Find Now →
+                    </span>
+                  </div>
+                </Link>
+              ) : (
+                <div className="card h-100 p-4 rounded-4 shadow-lg border-0">
+                  <i className={`${f.icon} text-danger display-5 mb-3`} />
+                  <h5 className="fw-bold">{f.title}</h5>
+                  <p className="text-secondary">{f.desc}</p>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -231,7 +162,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="bg-dark text-white text-center py-3 mt-auto">
-        <p className="mb-0">© 2025 BloodBank — Save Lives Together ❤️</p>
+        <p className="mb-0">© 2026 BloodBank — Save Lives Together ❤️</p>
       </footer>
     </div>
   );
