@@ -30,7 +30,29 @@ app.set("io", io);
 
 // middlewares
 app.use(helmet());
-app.use(cors({ origin: process.env.FRONTEND_URL || "*", credentials: true }));
+
+// CORS — support multiple origins + Vercel preview deployments
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((u) => u.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      // Check exact match
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      // Allow any *.vercel.app preview deployment
+      if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+      // Allow localhost for development
+      if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
+      callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
