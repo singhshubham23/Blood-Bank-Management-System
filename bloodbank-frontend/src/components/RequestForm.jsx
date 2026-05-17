@@ -80,60 +80,75 @@ export default function RequestForm({ defaultOrgId = null, allowedTypes = null, 
 
         {/* Request Type */}
         <div className="mb-3">
-          <label className="form-label fw-semibold text-secondary">Request Type</label>
-          <select
-            name="requestType"
-            value={form.requestType}
-            onChange={handleChange}
-            className="form-select"
-          >
-            {options.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+          <label className="form-label fw-bold text-secondary small text-uppercase">Request Type</label>
+          <div className="input-group shadow-sm">
+            <span className="input-group-text bg-white border-end-0 text-danger">
+              <i className="bi bi-ui-radios"></i>
+            </span>
+            <select
+              name="requestType"
+              value={form.requestType}
+              onChange={handleChange}
+              className="form-select border-start-0"
+            >
+              {options.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Blood Group */}
         <div className="mb-3">
-          <label className="form-label fw-semibold text-secondary">Blood Group</label>
-          <select
-            name="bloodGroup"
-            value={form.bloodGroup}
-            onChange={handleChange}
-            required
-            className="form-select"
-          >
-            <option value="">Select Blood Group</option>
-            {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map((bg) => (
-              <option key={bg} value={bg}>
-                {bg}
-              </option>
-            ))}
-          </select>
+          <label className="form-label fw-bold text-secondary small text-uppercase">Blood Group</label>
+          <div className="input-group shadow-sm">
+            <span className="input-group-text bg-white border-end-0 text-danger">
+              <i className="bi bi-droplet-fill"></i>
+            </span>
+            <select
+              name="bloodGroup"
+              value={form.bloodGroup}
+              onChange={handleChange}
+              required
+              className="form-select border-start-0"
+            >
+              <option value="">Select Blood Group</option>
+              {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map((bg) => (
+                <option key={bg} value={bg}>
+                  {bg}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Units */}
         <div className="mb-3">
-          <label className="form-label fw-semibold text-secondary">Units (Bags)</label>
-          <input
-            type="number"
-            min="1"
-            name="units"
-            value={form.units}
-            onChange={handleChange}
-            className="form-control"
-            required
-          />
-          <small className="text-muted">1 unit ~ 450 ml of blood</small>
+          <label className="form-label fw-bold text-secondary small text-uppercase">Units (Bags)</label>
+          <div className="input-group shadow-sm">
+            <span className="input-group-text bg-white border-end-0 text-danger">
+              <i className="bi bi-bag-plus"></i>
+            </span>
+            <input
+              type="number"
+              min="1"
+              name="units"
+              value={form.units}
+              onChange={handleChange}
+              className="form-control border-start-0"
+              required
+            />
+          </div>
+          <small className="text-muted d-block mt-1"><i className="bi bi-info-circle me-1"></i>1 unit ~ 450 ml of blood</small>
         </div>
 
         {/* Priority (only for RECEIVE requests) */}
         {form.requestType === "RECEIVE" && (
           <div className="mb-3">
-            <label className="form-label fw-semibold text-secondary">
-              <i className="bi bi-exclamation-triangle me-1"></i>Priority Level
+            <label className="form-label fw-bold text-secondary small text-uppercase">
+              Priority Level
             </label>
             <div className="d-flex gap-3">
               <div className="form-check">
@@ -147,7 +162,7 @@ export default function RequestForm({ defaultOrgId = null, allowedTypes = null, 
                   onChange={handleChange}
                 />
                 <label className="form-check-label" htmlFor="priority-normal">
-                  <span className="badge bg-secondary">Normal</span>
+                  <span className="badge bg-secondary px-3 py-2">Normal</span>
                 </label>
               </div>
               <div className="form-check">
@@ -161,45 +176,50 @@ export default function RequestForm({ defaultOrgId = null, allowedTypes = null, 
                   onChange={handleChange}
                 />
                 <label className="form-check-label" htmlFor="priority-emergency">
-                  <span className="badge bg-danger">
+                  <span className="badge bg-danger px-3 py-2">
                     <i className="bi bi-exclamation-circle me-1"></i>Emergency
                   </span>
                 </label>
               </div>
             </div>
             {form.priority === "emergency" && (
-              <div className="alert alert-warning mt-2 py-2 small mb-0">
-                <i className="bi bi-info-circle me-1"></i>
-                <strong>Emergency alerts</strong> will send SMS notifications to registered donors with matching blood group. Use only for genuine emergencies.
+              <div className="alert alert-danger mt-3 py-2 small mb-0 shadow-sm border-0">
+                <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Emergency alerts</strong> will send SMS notifications to registered donors. Use only for genuine emergencies.
               </div>
             )}
           </div>
         )}
 
         {/* Notes */}
-        <div className="mb-3">
-          <label className="form-label fw-semibold text-secondary">Additional Information</label>
-          <textarea
-            name="notes"
-            value={form.notes}
-            onChange={handleChange}
-            rows="3"
-            placeholder="Optional message..."
-            className="form-control"
-          ></textarea>
+        <div className="mb-4">
+          <label className="form-label fw-bold text-secondary small text-uppercase">Additional Information</label>
+          <div className="input-group shadow-sm">
+            <span className="input-group-text bg-white border-end-0 text-danger align-items-start pt-2">
+              <i className="bi bi-card-text"></i>
+            </span>
+            <textarea
+              name="notes"
+              value={form.notes}
+              onChange={handleChange}
+              rows="3"
+              placeholder="Optional message or location details..."
+              className="form-control border-start-0"
+            ></textarea>
+          </div>
         </div>
 
         {/* CTA Button */}
         <button
-          className="btn btn-danger w-100 fw-bold py-2 mt-2"
+          className="btn btn-danger w-100 py-2 fw-bold shadow-sm rounded-3 mt-2"
           disabled={loading}
         >
           {loading ? (
             <><span className="spinner-border spinner-border-sm me-2"></span>Submitting...</>
           ) : form.priority === "emergency" ? (
-            <><i className="bi bi-exclamation-triangle me-2"></i>Submit Emergency Request</>
+            <><i className="bi bi-exclamation-triangle-fill me-2 fs-5"></i>Submit Emergency Request</>
           ) : (
-            "Submit Request"
+            <><i className="bi bi-send-fill me-2 fs-5"></i>Submit Request</>
           )}
         </button>
       </form>

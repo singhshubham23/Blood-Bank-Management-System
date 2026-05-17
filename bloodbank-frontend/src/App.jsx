@@ -14,7 +14,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/DashBoard";
 import Requests from "./pages/Requests";
 import TransactionHistory from "./pages/TransactionHistory";
-import DigitalCardPage from "./pages/DigitalCardPage";
+import CreateRequest from "./pages/CreateRequest";
 import NearbyHelp from "./pages/NearbyHelp";
 import Profile from "./pages/Profile";
 import Inventory from "./pages/Inventory";
@@ -111,10 +111,10 @@ export default function App() {
             }
           />
           <Route
-            path="/digital-card"
+            path="/create-request"
             element={
               <Protected roles={["user"]}>
-                <DigitalCardPage />
+                <CreateRequest />
               </Protected>
             }
           />

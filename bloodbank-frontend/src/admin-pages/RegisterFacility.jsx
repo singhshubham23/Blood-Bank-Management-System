@@ -61,82 +61,116 @@ export default function RegisterFacility() {
                         {success && <div className="alert alert-success">{success}</div>}
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label fw-semibold">Facility Role</label>
-                                <select
-                                    className="form-select text-capitalize"
-                                    name="role"
-                                    value={formData.role}
-                                    onChange={handleChange}
-                                >
-                                    <option value="organisation">Institution (Organisation)</option>
-                                    <option value="hospital">Hospital</option>
-                                </select>
+                                <label className="form-label fw-bold text-secondary small text-uppercase">Facility Role</label>
+                                <div className="input-group shadow-sm">
+                                    <span className="input-group-text bg-white border-end-0 text-danger">
+                                        <i className="bi bi-building-gear"></i>
+                                    </span>
+                                    <select
+                                        className="form-select border-start-0 text-capitalize"
+                                        name="role"
+                                        value={formData.role}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="organisation">Institution (Organisation)</option>
+                                        <option value="hospital">Hospital</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label fw-semibold">Facility Name</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="name"
-                                    placeholder="Enter facility name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <label className="form-label fw-bold text-secondary small text-uppercase">Facility Name</label>
+                                <div className="input-group shadow-sm">
+                                    <span className="input-group-text bg-white border-end-0 text-danger">
+                                        <i className="bi bi-hospital"></i>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        className="form-control border-start-0"
+                                        name="name"
+                                        placeholder="Enter facility name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label fw-semibold">Email Address</label>
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    name="email"
-                                    placeholder="facility@example.com"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <label className="form-label fw-bold text-secondary small text-uppercase">Email Address</label>
+                                <div className="input-group shadow-sm">
+                                    <span className="input-group-text bg-white border-end-0 text-danger">
+                                        <i className="bi bi-envelope-fill"></i>
+                                    </span>
+                                    <input
+                                        type="email"
+                                        className="form-control border-start-0"
+                                        name="email"
+                                        placeholder="facility@example.com"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label fw-semibold">Password</label>
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    name="password"
-                                    placeholder="Create a password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <label className="form-label fw-bold text-secondary small text-uppercase">Password</label>
+                                <div className="input-group shadow-sm">
+                                    <span className="input-group-text bg-white border-end-0 text-danger">
+                                        <i className="bi bi-lock-fill"></i>
+                                    </span>
+                                    <input
+                                        type="password"
+                                        className="form-control border-start-0"
+                                        name="password"
+                                        placeholder="Create a password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label fw-semibold">Phone Number</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="phone"
-                                    placeholder="Enter contact number"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                />
+                                <label className="form-label fw-bold text-secondary small text-uppercase">Phone Number</label>
+                                <div className="input-group shadow-sm">
+                                    <span className="input-group-text bg-white border-end-0 text-danger">
+                                        <i className="bi bi-telephone-fill"></i>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        className="form-control border-start-0"
+                                        name="phone"
+                                        placeholder="Enter contact number"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                    />
+                                </div>
                             </div>
                             <div className="mb-4">
-                                <label className="form-label fw-semibold">Location / Address</label>
-                                <textarea
-                                    className="form-control"
-                                    name="location"
-                                    rows="2"
-                                    placeholder="Enter full address"
-                                    value={formData.location}
-                                    onChange={handleChange}
-                                    required
-                                ></textarea>
+                                <label className="form-label fw-bold text-secondary small text-uppercase">Location / Address</label>
+                                <div className="input-group shadow-sm">
+                                    <span className="input-group-text bg-white border-end-0 text-danger align-items-start pt-2">
+                                        <i className="bi bi-geo-alt-fill"></i>
+                                    </span>
+                                    <textarea
+                                        className="form-control border-start-0"
+                                        name="location"
+                                        rows="2"
+                                        placeholder="Enter full address"
+                                        value={formData.location}
+                                        onChange={handleChange}
+                                        required
+                                    ></textarea>
+                                </div>
                             </div>
                             <button
                                 type="submit"
-                                className="btn btn-danger w-100 fw-bold rounded-3 py-2"
+                                className="btn btn-danger w-100 py-2 fw-bold shadow-sm rounded-3 mt-2"
                                 disabled={loading}
                             >
-                                {loading ? "Registering..." : "Register Facility"}
+                                {loading ? (
+                                    <><span className="spinner-border spinner-border-sm me-2"></span>Registering...</>
+                                ) : (
+                                    <><i className="bi bi-building-add me-2 fs-5"></i>Register Facility</>
+                                )}
                             </button>
                         </form>
                     </div>

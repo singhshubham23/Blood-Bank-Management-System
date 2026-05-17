@@ -11,7 +11,7 @@ const NAV_CONFIG = {
         { icon: "bi-speedometer2", label: "Dashboard", path: "/dashboard" },
         { icon: "bi-card-checklist", label: "My Requests", path: "/requests" },
         { icon: "bi-cash-stack", label: "Transactions", path: "/transactions" },
-        { icon: "bi-person-vcard-fill", label: "Digital Card", path: "/digital-card" },
+        { icon: "bi-plus-circle", label: "Create Request", path: "/create-request" },
       ],
     },
     {

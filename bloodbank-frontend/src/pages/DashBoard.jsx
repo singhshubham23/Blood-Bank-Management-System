@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import DigitalCard from "../components/DigitalCard";
-import RequestForm from "../components/RequestForm";
+
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
@@ -17,29 +17,16 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Responsive Grid */}
-      <div className="row g-4">
-
+      <div className="row g-4 justify-content-center">
         {/* Digital Card */}
-        <div className="col-lg-6 col-md-12">
+        <div className="col-lg-8 col-md-12">
           <div className="card shadow-sm border-0">
             <div className="card-body">
-              <h5 className="card-title text-primary mb-3">Your Card</h5>
+              <h5 className="card-title text-primary mb-3 text-center">Your Card</h5>
               <DigitalCard user={user} />
             </div>
           </div>
         </div>
-
-        {/* Request Form */}
-        <div className="col-lg-6 col-md-12">
-          <div className="card shadow-sm border-0">
-            <div className="card-body">
-              <h5 className="card-title text-success mb-3">Create Request</h5>
-              <RequestForm />
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   );

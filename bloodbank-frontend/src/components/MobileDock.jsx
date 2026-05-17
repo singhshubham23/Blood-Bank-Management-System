@@ -36,7 +36,7 @@ const OVERLAY_NAV = {
     { icon: "bi-speedometer2", label: "Dashboard", path: "/dashboard" },
     { icon: "bi-card-checklist", label: "My Requests", path: "/requests" },
     { icon: "bi-cash-stack", label: "Transactions", path: "/transactions" },
-    { icon: "bi-person-vcard-fill", label: "Digital Card", path: "/digital-card" },
+    { icon: "bi-plus-circle", label: "Create Request", path: "/create-request" },
     { icon: "bi-geo-alt-fill", label: "Nearby Help", path: "/nearby-help" },
     { icon: "bi-person-fill", label: "Profile", path: "/profile" },
   ],

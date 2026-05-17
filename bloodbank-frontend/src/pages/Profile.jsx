@@ -218,50 +218,52 @@ export default function Profile() {
 
             {/* Name */}
             <div className="mb-3">
-              <label className="form-label fw-semibold">Name</label>
-              <div className="input-group">
-                <span className="input-group-text bg-danger text-white">
+              <label className="form-label fw-bold text-secondary small text-uppercase">Full Name</label>
+              <div className="input-group shadow-sm">
+                <span className="input-group-text bg-white border-end-0 text-danger">
                   <i className="bi bi-person-fill"></i>
                 </span>
                 <input
                   name="name"
-                  className="form-control"
+                  className="form-control border-start-0"
                   value={form.name}
                   onChange={handleChange}
+                  placeholder="Your name"
                 />
               </div>
             </div>
 
             {/* Phone */}
             <div className="mb-3">
-              <label className="form-label fw-semibold">Phone</label>
-              <div className="input-group">
-                <span className="input-group-text bg-danger text-white">
+              <label className="form-label fw-bold text-secondary small text-uppercase">Phone Number</label>
+              <div className="input-group shadow-sm">
+                <span className="input-group-text bg-white border-end-0 text-danger">
                   <i className="bi bi-telephone-fill"></i>
                 </span>
                 <input
                   name="phone"
-                  className="form-control"
+                  className="form-control border-start-0"
                   value={form.phone}
                   onChange={handleChange}
+                  placeholder="Your phone number"
                 />
               </div>
             </div>
 
             {/* Blood Group */}
             <div className="mb-3">
-              <label className="form-label fw-semibold">Blood Group</label>
-              <div className="input-group">
-                <span className="input-group-text bg-danger text-white">
-                  <i className="bi bi-droplet-half"></i>
+              <label className="form-label fw-bold text-secondary small text-uppercase">Blood Group</label>
+              <div className="input-group shadow-sm">
+                <span className="input-group-text bg-white border-end-0 text-danger">
+                  <i className="bi bi-droplet-fill"></i>
                 </span>
                 <select
                   name="bloodGroup"
-                  className="form-select"
+                  className="form-select border-start-0"
                   value={form.bloodGroup}
                   onChange={handleChange}
                 >
-                  <option value="">Select</option>
+                  <option value="">Select Blood Group</option>
                   {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
                     <option key={bg} value={bg}>{bg}</option>
                   ))}
@@ -270,24 +272,25 @@ export default function Profile() {
             </div>
 
             {/* Location */}
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Location</label>
-              <div className="input-group">
-                <span className="input-group-text bg-danger text-white">
+            <div className="mb-4">
+              <label className="form-label fw-bold text-secondary small text-uppercase">Location</label>
+              <div className="input-group shadow-sm">
+                <span className="input-group-text bg-white border-end-0 text-danger">
                   <i className="bi bi-geo-alt-fill"></i>
                 </span>
                 <input
                   name="location"
-                  className="form-control"
+                  className="form-control border-start-0"
                   value={form.location}
                   onChange={handleChange}
+                  placeholder="City, State"
                 />
               </div>
             </div>
 
             {/* Save Button */}
             <button
-              className="btn btn-danger w-100 fw-bold py-2 shadow-sm"
+              className="btn btn-danger w-100 py-2 fw-bold shadow-sm rounded-3 mt-2"
               disabled={saving}
             >
               {saving ? (
@@ -296,7 +299,9 @@ export default function Profile() {
                   Saving...
                 </span>
               ) : (
-                "Save Changes"
+                <>
+                  <i className="bi bi-check2-circle me-2 fs-5"></i> Save Changes
+                </>
               )}
             </button>
 
