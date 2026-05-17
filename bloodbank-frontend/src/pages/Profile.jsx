@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api/axios";
 
@@ -14,6 +14,10 @@ export default function Profile() {
 
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
+  const [msgType, setMsgType] = useState("info");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null);
 
   // Load form values when user becomes available
   useEffect(() => {
@@ -31,19 +35,67 @@ export default function Profile() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type)) {
+      setMsg("Only JPEG, PNG, and WebP images are allowed");
+      setMsgType("danger");
+      return;
+    }
+
+    // Validate size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMsg("Image must be under 5MB");
+      setMsgType("danger");
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setMsg("");
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     setSaving(true);
+    setMsg("");
 
     try {
-      const res = await api.put("/auth/update", form);
+      // Use FormData to support file upload
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("phone", form.phone);
+      formData.append("bloodGroup", form.bloodGroup);
+      formData.append("location", form.location);
+
+      if (selectedFile) {
+        formData.append("profilePicture", selectedFile);
+      }
+
+      const res = await api.put("/auth/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       setUser(res.data.user);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       setMsg("Profile updated successfully!");
+      setMsgType("success");
+      setSelectedFile(null);
+      setPreviewUrl(null);
     } catch {
       setMsg("Failed to update profile");
+      setMsgType("danger");
     } finally {
       setSaving(false);
     }
@@ -67,6 +119,8 @@ export default function Profile() {
     );
   }
 
+  const profilePicUrl = previewUrl || user?.profilePicture?.url;
+
   return (
     <>
       {/* Banner */}
@@ -80,14 +134,68 @@ export default function Profile() {
       <div className="container py-5" style={{ maxWidth: "650px" }}>
         <div className="card shadow border-0 p-4 rounded-4">
 
-          {/* Avatar Section */}
+          {/* Avatar Section with Upload */}
           <div className="text-center mb-4">
             <div
-              className="rounded-circle bg-danger d-flex justify-content-center align-items-center shadow"
-              style={{ width: "95px", height: "95px" }}
+              className="position-relative d-inline-block"
+              style={{ cursor: "pointer" }}
+              onClick={() => fileInputRef.current?.click()}
+              title="Click to change profile picture"
             >
-              <i className="bi bi-person-fill text-white fs-1"></i>
+              {profilePicUrl ? (
+                <img
+                  src={profilePicUrl}
+                  alt="Profile"
+                  className="rounded-circle shadow border border-3 border-danger"
+                  style={{ width: "95px", height: "95px", objectFit: "cover" }}
+                />
+              ) : (
+                <div
+                  className="rounded-circle bg-danger d-flex justify-content-center align-items-center shadow"
+                  style={{ width: "95px", height: "95px" }}
+                >
+                  <i className="bi bi-person-fill text-white fs-1"></i>
+                </div>
+              )}
+              {/* Camera overlay icon */}
+              <div
+                className="position-absolute bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                style={{
+                  bottom: "0",
+                  right: "0",
+                  width: "30px",
+                  height: "30px",
+                  border: "2px solid #dc3545",
+                }}
+              >
+                <i className="bi bi-camera-fill text-danger" style={{ fontSize: "14px" }}></i>
+              </div>
             </div>
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="d-none"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileSelect}
+            />
+
+            {/* Preview info */}
+            {selectedFile && (
+              <div className="mt-2">
+                <span className="badge bg-success me-2">
+                  <i className="bi bi-image me-1"></i>
+                  {selectedFile.name}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={removeSelectedFile}
+                >
+                  <i className="bi bi-x"></i>
+                </button>
+              </div>
+            )}
 
             <h4 className="mt-3 mb-1 text-danger fw-bold text-uppercase">
               {user?.name || "Unknown User"}
@@ -100,7 +208,7 @@ export default function Profile() {
 
           {/* Success / Error Message */}
           {msg && (
-            <div className="alert alert-info text-center animate__animated animate__fadeIn">
+            <div className={`alert alert-${msgType} text-center animate__animated animate__fadeIn`}>
               {msg}
             </div>
           )}

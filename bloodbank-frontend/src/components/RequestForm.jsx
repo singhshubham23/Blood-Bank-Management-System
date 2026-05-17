@@ -29,6 +29,7 @@ export default function RequestForm({ defaultOrgId = null, allowedTypes = null, 
     units: 1,
     requestType: initialType || options[0]?.value || "RECEIVE",
     notes: "",
+    priority: "normal",
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
@@ -56,6 +57,7 @@ export default function RequestForm({ defaultOrgId = null, allowedTypes = null, 
         units: 1,
         requestType: initialType || options[0]?.value || "RECEIVE",
         notes: "",
+        priority: "normal",
       });
 
       setTimeout(() => navigate("/requests"), 1500);
@@ -124,8 +126,55 @@ export default function RequestForm({ defaultOrgId = null, allowedTypes = null, 
             className="form-control"
             required
           />
-          <small className="text-muted">1 unit ˜ 450 ml of blood</small>
+          <small className="text-muted">1 unit ~ 450 ml of blood</small>
         </div>
+
+        {/* Priority (only for RECEIVE requests) */}
+        {form.requestType === "RECEIVE" && (
+          <div className="mb-3">
+            <label className="form-label fw-semibold text-secondary">
+              <i className="bi bi-exclamation-triangle me-1"></i>Priority Level
+            </label>
+            <div className="d-flex gap-3">
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="priority"
+                  id="priority-normal"
+                  value="normal"
+                  checked={form.priority === "normal"}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label" htmlFor="priority-normal">
+                  <span className="badge bg-secondary">Normal</span>
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="priority"
+                  id="priority-emergency"
+                  value="emergency"
+                  checked={form.priority === "emergency"}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label" htmlFor="priority-emergency">
+                  <span className="badge bg-danger">
+                    <i className="bi bi-exclamation-circle me-1"></i>Emergency
+                  </span>
+                </label>
+              </div>
+            </div>
+            {form.priority === "emergency" && (
+              <div className="alert alert-warning mt-2 py-2 small mb-0">
+                <i className="bi bi-info-circle me-1"></i>
+                <strong>Emergency alerts</strong> will send SMS notifications to registered donors with matching blood group. Use only for genuine emergencies.
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Notes */}
         <div className="mb-3">
@@ -141,8 +190,17 @@ export default function RequestForm({ defaultOrgId = null, allowedTypes = null, 
         </div>
 
         {/* CTA Button */}
-        <button className="btn btn-danger w-100 fw-bold py-2 mt-2" disabled={loading}>
-          {loading ? "Submitting..." : "Submit Request"}
+        <button
+          className="btn btn-danger w-100 fw-bold py-2 mt-2"
+          disabled={loading}
+        >
+          {loading ? (
+            <><span className="spinner-border spinner-border-sm me-2"></span>Submitting...</>
+          ) : form.priority === "emergency" ? (
+            <><i className="bi bi-exclamation-triangle me-2"></i>Submit Emergency Request</>
+          ) : (
+            "Submit Request"
+          )}
         </button>
       </form>
 

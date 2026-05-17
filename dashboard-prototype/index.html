@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command Dashboard — Asymmetric UI</title>
+  <meta name="description" content="High-fidelity 30/70 asymmetric split-screen dashboard with role-adaptive views" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ════════ COMMAND PANEL (30%) ════════ -->
+  <aside class="command-panel" id="commandPanel">
+    <div class="panel-header">
+      <div class="brand">
+        <div class="brand-icon">🩸</div>
+        <div>
+          <div class="brand-text">BloodBank</div>
+          <div class="brand-sub">Command Center</div>
+        </div>
+      </div>
+      <div class="search-bar">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" placeholder="Search anything..." id="globalSearch" />
+        <kbd>⌘K</kbd>
+      </div>
+    </div>
+
+    <!-- Role Switcher -->
+    <div class="role-switcher" id="roleSwitcher">
+      <button class="role-btn active" data-role="user">User</button>
+      <button class="role-btn" data-role="admin">Admin</button>
+      <button class="role-btn" data-role="org">Organization</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-grid" id="navGrid">
+      <!-- Populated by JS per role -->
+    </nav>
+
+    <!-- Activity Ring Widget -->
+    <div class="activity-widget">
+      <div class="activity-title">Team Activity</div>
+      <div class="activity-ring-container">
+        <div class="activity-ring">
+          <svg viewBox="0 0 64 64">
+            <circle class="ring-bg" cx="32" cy="32" r="25" />
+            <circle class="ring-fill-1" cx="32" cy="32" r="25" />
+            <circle class="ring-bg" cx="32" cy="32" r="20" />
+            <circle class="ring-fill-2" cx="32" cy="32" r="20" />
+            <circle class="ring-bg" cx="32" cy="32" r="15" />
+            <circle class="ring-fill-3" cx="32" cy="32" r="15" />
+          </svg>
+          <div class="ring-center" id="ringPercent">87%</div>
+        </div>
+        <div class="activity-stats">
+          <div class="activity-stat"><span class="stat-dot" style="background:var(--accent)"></span> Donations — 74%</div>
+          <div class="activity-stat"><span class="stat-dot" style="background:var(--accent2)"></span> Requests — 68%</div>
+          <div class="activity-stat"><span class="stat-dot" style="background:var(--accent3)"></span> Approvals — 82%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Footer -->
+    <div class="panel-footer">
+      <div class="user-avatar">SK</div>
+      <div class="user-info">
+        <div class="user-name">Shubham Kumar</div>
+        <div class="user-role" id="footerRole">Standard User</div>
+      </div>
+      <button class="panel-footer-btn" title="Settings"><i class="bi bi-gear"></i></button>
+      <button class="panel-footer-btn" title="Logout"><i class="bi bi-box-arrow-right"></i></button>
+    </div>
+  </aside>
+
+  <!-- ════════ CONTENT AREA (70%) ════════ -->
+  <main class="content-area" id="contentArea">
+
+    <!-- ──── USER VIEW ──── -->
+    <div class="role-view active" id="view-user">
+      <div class="content-inner">
+        <div class="content-header">
+          <div class="greeting">Good Morning</div>
+          <h1 class="page-title">Welcome back, <span>Shubham</span></h1>
+          <div class="header-actions">
+            <button class="header-btn primary"><i class="bi bi-plus-lg" style="margin-right:6px"></i>New Request</button>
+            <button class="header-btn ghost"><i class="bi bi-calendar3" style="margin-right:6px"></i>Schedule</button>
+          </div>
+        </div>
+        <div class="metrics-row">
+          <div class="metric-card c1">
+            <div class="metric-icon"><i class="bi bi-droplet-fill"></i></div>
+            <div class="metric-value">12</div>
+            <div class="metric-label">Total Donations</div>
+            <div class="metric-change up">↑ 2 this month</div>
+          </div>
+          <div class="metric-card c2">
+            <div class="metric-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+            <div class="metric-value">3</div>
+            <div class="metric-label">Active Requests</div>
+            <div class="metric-change up">↑ 1 new</div>
+          </div>
+          <div class="metric-card c3">
+            <div class="metric-icon"><i class="bi bi-check-circle-fill"></i></div>
+            <div class="metric-value">8</div>
+            <div class="metric-label">Completed</div>
+            <div class="metric-change up">↑ 12%</div>
+          </div>
+          <div class="metric-card c4">
+            <div class="metric-icon"><i class="bi bi-calendar-check-fill"></i></div>
+            <div class="metric-value">May 22</div>
+            <div class="metric-label">Next Eligible</div>
+            <div class="metric-change" style="color:var(--accent);background:rgba(99,102,241,0.08)">5 days</div>
+          </div>
+        </div>
+        <div class="content-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Donation Activity</div>
+              <a class="card-action">View All →</a>
+            </div>
+            <div class="chart-area">
+              <div class="chart-bars" id="userChart"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Upcoming Tasks</div>
+              <a class="card-action">See All →</a>
+            </div>
+            <div class="task-list">
+              <div class="task-item"><div class="task-check"></div><div class="task-content"><div class="task-title-text">Complete health screening</div><div class="task-meta">Due Today · AIIMS Delhi</div></div><div class="task-priority priority-high"></div></div>
+              <div class="task-item"><div class="task-check"></div><div class="task-content"><div class="task-title-text">Upload blood test report</div><div class="task-meta">Due Tomorrow</div></div><div class="task-priority priority-mid"></div></div>
+              <div class="task-item"><div class="task-check done"></div><div class="task-content"><div class="task-title-text">Donation appointment booked</div><div class="task-meta">May 22, 10:00 AM</div></div><div class="task-priority priority-low"></div></div>
+              <div class="task-item"><div class="task-check"></div><div class="task-content"><div class="task-title-text">Update emergency contacts</div><div class="task-meta">No deadline</div></div><div class="task-priority priority-low"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── ADMIN VIEW ──── -->
+    <div class="role-view" id="view-admin">
+      <div class="content-inner">
+        <div class="content-header">
+          <div class="greeting">Administration</div>
+          <h1 class="page-title">System <span>Overview</span></h1>
+          <div class="header-actions">
+            <button class="header-btn primary"><i class="bi bi-shield-check" style="margin-right:6px"></i>Security Scan</button>
+            <button class="header-btn ghost"><i class="bi bi-download" style="margin-right:6px"></i>Export Report</button>
+          </div>
+        </div>
+        <div class="metrics-row">
+          <div class="metric-card c1"><div class="metric-icon"><i class="bi bi-people-fill"></i></div><div class="metric-value">2,847</div><div class="metric-label">Total Users</div><div class="metric-change up">↑ 156 this week</div></div>
+          <div class="metric-card c3"><div class="metric-icon"><i class="bi bi-server"></i></div><div class="metric-value">99.8%</div><div class="metric-label">System Uptime</div><div class="metric-change up">↑ Healthy</div></div>
+          <div class="metric-card c2"><div class="metric-icon"><i class="bi bi-exclamation-triangle-fill"></i></div><div class="metric-value">4</div><div class="metric-label">Open Alerts</div><div class="metric-change down">↑ 2 critical</div></div>
+          <div class="metric-card c4"><div class="metric-icon"><i class="bi bi-shield-lock-fill"></i></div><div class="metric-value">0</div><div class="metric-label">Security Issues</div><div class="metric-change up">All clear</div></div>
+        </div>
+        <div class="content-grid">
+          <div class="card">
+            <div class="card-header"><div class="card-title">User Management</div><a class="card-action">Manage →</a></div>
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Last Active</th></tr></thead>
+              <tbody>
+                <tr><td><b>Priya Sharma</b></td><td>Donor</td><td><span class="status-pill active">Active</span></td><td>2 min ago</td></tr>
+                <tr><td><b>Raj Patel</b></td><td>Hospital</td><td><span class="status-pill active">Active</span></td><td>15 min ago</td></tr>
+                <tr><td><b>Anita Desai</b></td><td>Organisation</td><td><span class="status-pill pending">Pending</span></td><td>1 hour ago</td></tr>
+                <tr><td><b>Vikram Singh</b></td><td>Donor</td><td><span class="status-pill inactive">Inactive</span></td><td>3 days ago</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Security Logs</div><a class="card-action">View All →</a></div>
+            <div class="log-list">
+              <div class="log-item"><div class="log-dot" style="background:var(--success)"></div><div><div class="log-text">Authentication system check passed</div><div class="log-time">2 minutes ago</div></div></div>
+              <div class="log-item"><div class="log-dot" style="background:var(--warning)"></div><div><div class="log-text">Rate limit triggered from 192.168.1.42</div><div class="log-time">18 minutes ago</div></div></div>
+              <div class="log-item"><div class="log-dot" style="background:var(--success)"></div><div><div class="log-text">Database backup completed successfully</div><div class="log-time">1 hour ago</div></div></div>
+              <div class="log-item"><div class="log-dot" style="background:var(--danger)"></div><div><div class="log-text">Failed login attempt — admin@bloodbank.org</div><div class="log-time">3 hours ago</div></div></div>
+              <div class="log-item"><div class="log-dot" style="background:var(--success)"></div><div><div class="log-text">SSL certificate renewed</div><div class="log-time">6 hours ago</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── ORG VIEW ──── -->
+    <div class="role-view" id="view-org">
+      <div class="content-inner">
+        <div class="content-header">
+          <div class="greeting">Organization Dashboard</div>
+          <h1 class="page-title">Analytics & <span>Operations</span></h1>
+          <div class="header-actions">
+            <button class="header-btn primary"><i class="bi bi-bar-chart-line-fill" style="margin-right:6px"></i>Generate Report</button>
+            <button class="header-btn ghost"><i class="bi bi-people" style="margin-right:6px"></i>Invite Team</button>
+          </div>
+        </div>
+        <div class="metrics-row">
+          <div class="metric-card c1"><div class="metric-icon"><i class="bi bi-building"></i></div><div class="metric-value">14</div><div class="metric-label">Active Branches</div><div class="metric-change up">↑ 2 new</div></div>
+          <div class="metric-card c2"><div class="metric-icon"><i class="bi bi-graph-up-arrow"></i></div><div class="metric-value">3,421</div><div class="metric-label">Units Collected</div><div class="metric-change up">↑ 18% MoM</div></div>
+          <div class="metric-card c3"><div class="metric-icon"><i class="bi bi-cash-stack"></i></div><div class="metric-value">₹4.2L</div><div class="metric-label">Monthly Budget</div><div class="metric-change down">↓ 3% over</div></div>
+          <div class="metric-card c4"><div class="metric-icon"><i class="bi bi-person-workspace"></i></div><div class="metric-value">89</div><div class="metric-label">Active Staff</div><div class="metric-change up">↑ 5 joined</div></div>
+        </div>
+        <div class="content-grid">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Collection Trends</div><a class="card-action">Details →</a></div>
+            <div class="chart-area"><div class="chart-bars" id="orgChart"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Workspace Feed</div><a class="card-action">All Activity →</a></div>
+            <div class="log-list">
+              <div class="log-item"><div class="log-dot" style="background:var(--accent)"></div><div><div class="log-text"><b>Delhi Branch</b> processed 42 units today</div><div class="log-time">10 minutes ago</div></div></div>
+              <div class="log-item"><div class="log-dot" style="background:var(--accent2)"></div><div><div class="log-text"><b>Mumbai Hub</b> approved 8 new donor registrations</div><div class="log-time">32 minutes ago</div></div></div>
+              <div class="log-item"><div class="log-dot" style="background:var(--accent4)"></div><div><div class="log-text">Monthly compliance audit submitted by <b>Priya S.</b></div><div class="log-time">1 hour ago</div></div></div>
+              <div class="log-item"><div class="log-dot" style="background:var(--warning)"></div><div><div class="log-text"><b>Kolkata Branch</b> flagged low O- inventory</div><div class="log-time">2 hours ago</div></div></div>
+              <div class="log-item"><div class="log-dot" style="background:var(--accent3)"></div><div><div class="log-text">Billing cycle completed for <b>Q2 2026</b></div><div class="log-time">Yesterday</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ════════ MOBILE BOTTOM DOCK ════════ -->
+<div class="mobile-dock" id="mobileDock">
+  <div class="dock-bar">
+    <button class="dock-item active" data-dock="home"><span><i class="bi bi-house-fill"></i></span><div class="dock-label">Home</div></button>
+    <button class="dock-item" data-dock="activity"><span><i class="bi bi-activity"></i></span><div class="dock-label">Activity</div></button>
+    <button class="dock-item" data-dock="search"><span><i class="bi bi-search"></i></span><div class="dock-label">Search</div></button>
+    <button class="dock-item" data-dock="profile"><span><i class="bi bi-person-fill"></i></span><div class="dock-label">Profile</div></button>
+  </div>
+</div>
+
+<!-- Mobile overlay trigger -->
+<button class="mobile-overlay-trigger" id="mobileOverlayTrigger"><i class="bi bi-grid-3x3-gap-fill"></i></button>
+
+<!-- Mobile overlay -->
+<div class="mobile-overlay" id="mobileOverlay">
+  <div class="mobile-overlay-content" id="mobileOverlayContent">
+    <div class="overlay-handle"></div>
+    <div class="search-bar" style="margin-bottom:16px">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text" placeholder="Search anything..." style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);color:#fff" />
+    </div>
+    <div class="role-switcher" style="margin:0 0 16px 0" id="mobileRoleSwitcher"></div>
+    <nav id="mobileNavGrid" class="nav-grid" style="padding:0"></nav>
+  </div>
+</div>
+
+<script>
+// ─── NAV DATA PER ROLE ───
+const navData = {
+  user: [
+    { section: 'Main', items: [
+      { icon: 'bi-house-fill', label: 'Dashboard', active: true },
+      { icon: 'bi-droplet-fill', label: 'My Donations', badge: '3' },
+      { icon: 'bi-heart-pulse-fill', label: 'Blood Requests' },
+      { icon: 'bi-geo-alt-fill', label: 'Nearby Help' },
+    ]},
+    { section: 'Quick Access', pills: ['Calendar', 'Reports', 'Health Log', 'History'] },
+    { section: 'Account', items: [
+      { icon: 'bi-person-fill', label: 'Profile' },
+      { icon: 'bi-bell-fill', label: 'Notifications', badge: '5' },
+      { icon: 'bi-gear-fill', label: 'Settings' },
+    ]},
+  ],
+  admin: [
+    { section: 'System', items: [
+      { icon: 'bi-speedometer2', label: 'Dashboard', active: true },
+      { icon: 'bi-people-fill', label: 'User Management', badge: '12' },
+      { icon: 'bi-shield-lock-fill', label: 'Security Center' },
+      { icon: 'bi-database-fill', label: 'Database' },
+    ]},
+    { section: 'Monitoring', pills: ['Logs', 'Alerts', 'API Health', 'Backups'] },
+    { section: 'Controls', items: [
+      { icon: 'bi-toggles', label: 'Feature Flags' },
+      { icon: 'bi-exclamation-triangle-fill', label: 'Alerts', badge: '4', badgeType: 'danger' },
+      { icon: 'bi-file-earmark-text-fill', label: 'Audit Trail' },
+    ]},
+  ],
+  org: [
+    { section: 'Overview', items: [
+      { icon: 'bi-bar-chart-line-fill', label: 'Analytics', active: true },
+      { icon: 'bi-building', label: 'Branches' },
+      { icon: 'bi-graph-up-arrow', label: 'Collections' },
+      { icon: 'bi-people-fill', label: 'Staff' },
+    ]},
+    { section: 'Operations', pills: ['Inventory', 'Billing', 'Compliance', 'Partners'] },
+    { section: 'Manage', items: [
+      { icon: 'bi-cash-stack', label: 'Billing', badge: '₹' },
+      { icon: 'bi-chat-dots-fill', label: 'Workspace Feed' },
+      { icon: 'bi-sliders', label: 'Org Settings' },
+    ]},
+  ],
+};
+
+const roleLabels = { user: 'Standard User', admin: 'Administrator', org: 'Organization Manager' };
+
+function renderNav(role, container) {
+  container.innerHTML = '';
+  const data = navData[role];
+  data.forEach(section => {
+    const label = document.createElement('div');
+    label.className = 'nav-section-label';
+    label.textContent = section.section;
+    container.appendChild(label);
+
+    if (section.items) {
+      section.items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'nav-item' + (item.active ? ' active' : '');
+        el.innerHTML = `<i class="bi ${item.icon} nav-icon"></i><span class="nav-label">${item.label}</span>` +
+          (item.badge ? `<span class="nav-badge ${item.badgeType || ''}">${item.badge}</span>` : '');
+        el.addEventListener('click', () => {
+          container.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+          el.classList.add('active');
+        });
+        container.appendChild(el);
+      });
+    }
+
+    if (section.pills) {
+      const row = document.createElement('div');
+      row.className = 'nav-pills-row staggered';
+      section.pills.forEach((p, i) => {
+        const pill = document.createElement('div');
+        pill.className = 'pill-nav' + (i === 0 ? ' active' : '');
+        pill.textContent = p;
+        pill.addEventListener('click', () => {
+          row.querySelectorAll('.pill-nav').forEach(pp => pp.classList.remove('active'));
+          pill.classList.add('active');
+        });
+        row.appendChild(pill);
+      });
+      container.appendChild(row);
+    }
+  });
+}
+
+// ─── ROLE SWITCHING ───
+let currentRole = 'user';
+
+function switchRole(role) {
+  currentRole = role;
+  // Update buttons
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+  // Update views
+  document.querySelectorAll('.role-view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + role).classList.add('active');
+  // Update nav
+  renderNav(role, document.getElementById('navGrid'));
+  renderNav(role, document.getElementById('mobileNavGrid'));
+  // Footer role label
+  document.getElementById('footerRole').textContent = roleLabels[role];
+}
+
+// Bind role buttons (desktop + mobile)
+document.getElementById('roleSwitcher').addEventListener('click', e => {
+  const btn = e.target.closest('.role-btn');
+  if (btn) switchRole(btn.dataset.role);
+});
+
+// Clone role switcher for mobile overlay
+const mobileSwitcher = document.getElementById('mobileRoleSwitcher');
+['user', 'admin', 'org'].forEach(r => {
+  const btn = document.createElement('button');
+  btn.className = 'role-btn' + (r === 'user' ? ' active' : '');
+  btn.dataset.role = r;
+  btn.textContent = r === 'org' ? 'Organization' : r.charAt(0).toUpperCase() + r.slice(1);
+  btn.addEventListener('click', () => {
+    switchRole(r);
+    mobileSwitcher.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.role === r));
+    closeMobileOverlay();
+  });
+  mobileSwitcher.appendChild(btn);
+});
+
+// ─── CHARTS ───
+function renderBars(containerId, count, altFreq) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar' + (altFreq && i % altFreq === 0 ? ' alt' : '');
+    bar.style.height = (20 + Math.random() * 75) + '%';
+    bar.style.transitionDelay = (i * 40) + 'ms';
+    container.appendChild(bar);
+  }
+}
+
+// ─── MOBILE OVERLAY ───
+const overlay = document.getElementById('mobileOverlay');
+const trigger = document.getElementById('mobileOverlayTrigger');
+
+function closeMobileOverlay() { overlay.classList.remove('show'); }
+trigger?.addEventListener('click', () => overlay.classList.add('show'));
+overlay?.addEventListener('click', e => { if (e.target === overlay) closeMobileOverlay(); });
+
+// Mobile dock interactions
+document.querySelectorAll('.dock-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+// ─── INIT ───
+switchRole('user');
+renderBars('userChart', 14, 3);
+renderBars('orgChart', 14, 2);
+
+// Task check toggle
+document.querySelectorAll('.task-check').forEach(check => {
+  check.addEventListener('click', () => check.classList.toggle('done'));
+});
+</script>
+</body>
+</html>
