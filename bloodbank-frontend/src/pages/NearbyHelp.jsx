@@ -261,6 +261,44 @@ export default function NearbyHelp() {
               )}
             </div>
 
+            {/* Closest Recommendation */}
+            {results.length > 0 && (() => {
+              const closest = [...results]
+                .filter(r => r.distance !== null && r.distance !== undefined)
+                .sort((a, b) => a.distance - b.distance)[0];
+              if (!closest) return null;
+              return (
+                <div className="card border-0 bg-light rounded-4 p-4 mb-4 border-start border-4 border-danger shadow-sm relative overflow-hidden">
+                  <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                    <div className="d-flex align-items-center gap-3">
+                      <div className="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center shrink-0" style={{ width: "45px", height: "45px", minWidth: "45px" }}>
+                        <i className="bi bi-geo-alt-fill fs-5"></i>
+                      </div>
+                      <div>
+                        <span className="badge bg-danger rounded-pill px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider mb-1">
+                          Closest Recommendation
+                        </span>
+                        <h5 className="fw-bold text-dark mb-1">{closest.name}</h5>
+                        <p className="text-secondary small mb-0">
+                          This facility is only <strong>{closest.distance} km</strong> away. We recommend visiting here for immediate emergency assistance.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="shrink-0 text-end">
+                      <a
+                        href={getDirectionsUrl(closest)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-danger btn-sm rounded-pill px-4 py-2 fw-semibold"
+                      >
+                        <i className="bi bi-sign-turn-right-fill me-1"></i> Visit Here
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
             {results.length === 0 ? (
               <div className="card border-0 shadow-sm rounded-4 p-5 text-center">
                 <i className="bi bi-geo-alt text-muted" style={{ fontSize: "64px" }}></i>

@@ -51,7 +51,7 @@ export async function getNearbyBloodBanks(req: Request, res: Response) {
       const overpassUrl = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`;
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
+      const timeout = setTimeout(() => controller.abort(), 3000);
 
       const response = await fetch(overpassUrl, {
         signal: controller.signal,
