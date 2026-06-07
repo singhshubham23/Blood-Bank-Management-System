@@ -268,7 +268,10 @@ export default function NearbyHelp() {
                 .sort((a, b) => a.distance - b.distance)[0];
               if (!closest) return null;
               return (
-                <div className="card border-0 bg-light rounded-4 p-4 mb-4 border-start border-4 border-danger shadow-sm relative overflow-hidden">
+                <div
+                  className="card border-0 bg-light rounded-4 p-4 mb-4 shadow-sm relative overflow-hidden"
+                  style={{ borderLeft: "4px solid var(--bs-danger)" }}
+                >
                   <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                     <div className="d-flex align-items-center gap-3">
                       <div className="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center shrink-0" style={{ width: "45px", height: "45px", minWidth: "45px" }}>
