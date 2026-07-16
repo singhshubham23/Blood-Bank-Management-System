@@ -1,8 +1,7 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api/axios";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 
 export default function DigitalCard() {
   const { user } = useContext(AuthContext);
@@ -60,12 +59,128 @@ export default function DigitalCard() {
   const freeUnitsEarned = Math.floor(totalDonated / 5);
 
   const downloadPDF = async () => {
-    const element = cardRef.current;
     try {
-      const canvas = await html2canvas(element, { scale: 3, useCORS: true });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("portrait", "px", [430, 600]);
-      pdf.addImage(imgData, "PNG", 0, 0, 430, 600);
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: [430, 600],
+      });
+
+      const bg = [13, 19, 31];
+      const bg2 = [31, 41, 55];
+      const red = [220, 38, 38];
+      const rose = [251, 113, 133];
+      const textLight = [226, 232, 240];
+      const textMuted = [148, 163, 184];
+      const emerald = [52, 211, 153];
+      const amber = [251, 191, 36];
+      const white = [255, 255, 255];
+
+      pdf.setFillColor(...bg);
+      pdf.roundedRect(0, 0, 430, 600, 0, 0, "F");
+
+      // Soft background accents to mimic the screen card.
+      pdf.setFillColor(...bg2);
+      pdf.circle(405, 580, 92, "F");
+      pdf.setTextColor(255, 255, 255);
+
+      // Watermark.
+      pdf.setFillColor(220, 38, 38);
+      pdf.setGState(new pdf.GState({ opacity: 0.08 }));
+      pdf.circle(386, 525, 110, "F");
+      pdf.setGState(new pdf.GState({ opacity: 1 }));
+
+      pdf.setTextColor(...rose);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text("BloodBank Pass", 24, 36);
+
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(18);
+      pdf.text("DONOR RECORD", 24, 56);
+
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(7);
+      pdf.text("BLOOD GROUP", 315, 36);
+
+      pdf.setFillColor(...red);
+      pdf.roundedRect(314, 42, 70, 28, 6, 6, "F");
+      pdf.setTextColor(...white);
+      pdf.setFontSize(18);
+      pdf.text(String(user.bloodGroup || "O+"), 324, 61);
+
+      // Chip
+      pdf.setFillColor(245, 200, 92);
+      pdf.roundedRect(24, 94, 48, 36, 5, 5, "F");
+      pdf.setDrawColor(194, 140, 30);
+      pdf.setLineWidth(0.8);
+      pdf.roundedRect(24, 94, 48, 36, 5, 5, "S");
+      pdf.setDrawColor(174, 120, 16);
+      pdf.line(39, 94, 39, 130);
+      pdf.line(57, 94, 57, 130);
+      pdf.line(24, 112, 72, 112);
+      pdf.line(24, 103, 72, 103);
+      pdf.line(24, 121, 72, 121);
+
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(7);
+      pdf.text("DONOR NAME", 24, 150);
+      pdf.setTextColor(...white);
+      pdf.setFontSize(11);
+      pdf.text(String(user.name || "Not Provided"), 24, 168);
+
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(7);
+      pdf.text("DONOR ID", 24, 195);
+      pdf.setTextColor(...rose);
+      pdf.setFontSize(11);
+      pdf.text(String(user.uniqueId || "Not Provided"), 24, 213);
+
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(7);
+      pdf.text("CONTACT PHONE", 24, 240);
+      pdf.setTextColor(...white);
+      pdf.setFontSize(11);
+      pdf.text(String(user.phone || "Not Provided"), 24, 258);
+
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(7);
+      pdf.text("LOCATION", 24, 285);
+      pdf.setTextColor(...white);
+      pdf.setFontSize(11);
+      const locationText = String(user.location || "Not Provided");
+      const locationLines = pdf.splitTextToSize(locationText, 375);
+      pdf.text(locationLines, 24, 303);
+
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(7);
+      pdf.text("TOTAL DONATED", 24, 370);
+      pdf.setTextColor(...emerald);
+      pdf.setFontSize(11);
+      pdf.text(`${totalDonated} unit${totalDonated === 1 ? "" : "s"}`, 24, 388);
+
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(7);
+      pdf.text("FREE REWARDS", 24, 415);
+      pdf.setTextColor(...amber);
+      pdf.setFontSize(11);
+      pdf.text(`${freeUnitsEarned} unit${freeUnitsEarned === 1 ? "" : "s"}`, 24, 433);
+
+      // Barcode strip.
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(24, 465, 382, 30, 5, 5, "S");
+      for (let i = 0; i < 42; i += 1) {
+        const width = i % 4 === 0 ? 1 : i % 7 === 0 ? 3 : 2;
+        const x = 41 + i * 8;
+        pdf.setFillColor(240, 240, 245);
+        pdf.rect(x, 469, width, 22, "F");
+      }
+
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(7);
+      pdf.text(`*BB-${user.uniqueId ? user.uniqueId.substring(0, 8).toUpperCase() : "DONOR"}*`, 128, 512);
+      pdf.text("Thank you for saving lives - Certified Donor Pass", 74, 536);
+
       pdf.save("Digital_Blood_Donor_Card.pdf");
     } catch (err) {
       console.error("Failed to generate PDF", err);

@@ -41,14 +41,23 @@ export default function TransactionHistory() {
     if (!element) return;
 
     try {
-      const canvas = await html2canvas(element, { scale: 2 });
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+      });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a5");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Receipt_${txId.substring(0, 6)}.pdf`);
+      const blob = pdf.output("blob");
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Receipt_${txId.substring(0, 6)}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error("PDF generation failed", err);
     }
